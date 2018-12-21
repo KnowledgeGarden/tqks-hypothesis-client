@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-
+<!-- Fill in the ChangeMe values, 
+	then saveAs harvester-props.xml -->
 <properties>
 
 	<!-- BaseURL includes the
@@ -12,6 +13,9 @@
 	<!-- Must acquire a TOKEN from 
 		https://hypothes.is/account/developer -->
 	<parameter name="DeveloperToken" value="changeME" />
+
+	<!-- https://h.readthedocs.io/en/latest/api/realtime/ -->
+	<parameter name="RealtimeURL" value="wss://hypothes.is/ws" />
 
 </properties>
 
