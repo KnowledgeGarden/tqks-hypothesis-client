@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+
+<properties>
+
+	<!-- BaseURL includes the
+		api and annotations REST values -->
+	<parameter name="BaseURL" value="https://hypothes.is/api/search" />
+	
+	<!-- Must be determined from your hypothes.is account -->
+	<parameter name="GroupId" value="changeME" />
+	
+	<!-- Must acquire a TOKEN from 
+		https://hypothes.is/account/developer -->
+	<parameter name="DeveloperToken" value="changeME" />
+
+</properties>
+

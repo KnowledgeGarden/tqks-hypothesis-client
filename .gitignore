@@ -1,0 +1,7 @@
+/bin/
+/target/
+/config/harvester-props.xml
+.classpath
+.project
+.settings
+HypothesisHarvesterNotes.txt
