@@ -23,10 +23,10 @@ public class HypothesisClient {
 	private HypothesisHarvesterEnvironment environment;
 	private CloseableHttpClient client;
 	private final String 
-		BASE_URL,
-		TOKEN,
-		GROUP_ID,
-		FINAL_URL;
+		BASE_URL, 	// set in /config/harvester-props.xml
+		TOKEN,		// ditto
+		GROUP_ID,	// ditto
+		FINAL_URL;	// calculated here
 	
 	/**
 	 * @param env
@@ -37,6 +37,7 @@ public class HypothesisClient {
 		BASE_URL = environment.getStringProperty("BaseURL");
 		TOKEN = environment.getStringProperty("DeveloperToken");
 		GROUP_ID = environment.getStringProperty("GroupId");
+		// create the final URL
 		FINAL_URL = BASE_URL+"?group="+GROUP_ID;
 		System.out.println(FINAL_URL);
 	}
@@ -47,19 +48,24 @@ public class HypothesisClient {
 	 */
 	public IResult loadAnnotations() {
 		IResult result = new ResultPojo();
+		// create a GET command
 		HttpGet httpGet = new HttpGet(FINAL_URL);
 		httpGet.addHeader("Accept", "application/json");
+		// authenticate
 		httpGet.addHeader("Authorization", "Bearer "+TOKEN);
 		CloseableHttpResponse response1 = null;
 		try {
+			// execute the get
 			response1 = client.execute(httpGet);
 			// System.out.println(response1.getStatusLine());
 			HttpEntity entity1 = response1.getEntity();
 			if (entity1 != null) {
-				System.out.println("ContentSize "+entity1.getContentLength());
+				//Turn content into a JSONObject
+				//System.out.println("ContentSize "+entity1.getContentLength());
 				InputStream is = entity1.getContent();
 				JSONParser p = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
 				JSONObject obj = (JSONObject)p.parse(is);
+				//return the JSONObject for late processing
 				result.setResultObject(obj);
 			}
 			
