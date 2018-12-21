@@ -17,7 +17,7 @@ public class JSONProcessor {
 	private HypothesisHarvesterEnvironment environment;
 
 	/**
-	 * 
+	 * @param env
 	 */
 	public JSONProcessor(HypothesisHarvesterEnvironment env) {
 		environment = env;
