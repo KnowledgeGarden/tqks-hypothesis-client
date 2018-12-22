@@ -39,11 +39,12 @@ public class JSONProcessor {
 		IResult result = new ResultPojo();
 		JSONArray list = (JSONArray)jo.get("rows");
 		if (list != null && !list.isEmpty()) {
+			System.out.println("NumRows "+list.size()+" | "+jo.getAsString("total"));
 			Iterator<Object> itr = list.iterator();
 			//For testing only, just show the first element
 			// See /tests/FirstProcessorTest.java
 			JSONObject jx = (JSONObject)itr.next();
-			System.out.println("JX "+jx);
+			//System.out.println("JX "+jx);
 			//TODO
 		}
 		return result;

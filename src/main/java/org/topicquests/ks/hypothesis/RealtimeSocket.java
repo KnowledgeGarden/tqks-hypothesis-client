@@ -6,6 +6,7 @@ package org.topicquests.ks.hypothesis;
 /**
  * @author jackpark
  * @see https://github.com/TooTallNate/Java-WebSocket/wiki
+ * @see https://gist.github.com/judell/fc1df653f54b177068d6561dd80e6e72
  */
 public class RealtimeSocket {
 	private HypothesisHarvesterEnvironment environment;
