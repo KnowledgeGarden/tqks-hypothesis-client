@@ -5,3 +5,6 @@
 .project
 .settings
 HypothesisHarvesterNotes.txt
+cursor
+/test/
+logs/logfile.log

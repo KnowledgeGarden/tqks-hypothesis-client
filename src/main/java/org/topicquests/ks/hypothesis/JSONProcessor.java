@@ -3,6 +3,9 @@
  */
 package org.topicquests.ks.hypothesis;
 import java.util.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
 import org.topicquests.support.ResultPojo;
 import org.topicquests.support.api.IResult;
 
@@ -15,12 +18,13 @@ import net.minidev.json.JSONObject;
  */
 public class JSONProcessor {
 	private HypothesisHarvesterEnvironment environment;
-
+	private PrintWriter out;
 	/**
 	 * @param env
 	 */
 	public JSONProcessor(HypothesisHarvesterEnvironment env) {
 		environment = env;
+		debugSetup();
 	}
 /**
  * A plan is to:
@@ -38,16 +42,46 @@ public class JSONProcessor {
 	public IResult processJSON(JSONObject jo) {
 		IResult result = new ResultPojo();
 		JSONArray list = (JSONArray)jo.get("rows");
+		JSONObject jx;
+		long cursor = environment.getCursor();
 		if (list != null && !list.isEmpty()) {
 			System.out.println("NumRows "+list.size()+" | "+jo.getAsString("total"));
 			Iterator<Object> itr = list.iterator();
 			//For testing only, just show the first element
 			// See /tests/FirstProcessorTest.java
-			JSONObject jx = (JSONObject)itr.next();
+			//JSONObject jx = (JSONObject)itr.next();
 			//System.out.println("JX "+jx);
-			//TODO
+			while (itr.hasNext()) {
+				jx = (JSONObject)itr.next();
+				this.saveJSON(jx);
+				cursor++;
+			}
+			environment.updateCursor(cursor);
+			debugEnd();
 		}
 		return result;
 	}
 
+	void debugSetup() {
+		try {
+			File f = new File("test/"+System.currentTimeMillis()+".json");
+			FileOutputStream fos = new FileOutputStream(f, true);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+			out = new PrintWriter(osw);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	void saveJSON(JSONObject jo) {
+		out.println(jo.toJSONString());
+	}
+	void debugEnd() {
+		try {
+			out.flush();
+			out.close();
+			out = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -22,6 +22,7 @@ import net.minidev.json.parser.JSONParser;
 public class HypothesisClient {
 	private HypothesisHarvesterEnvironment environment;
 	private CloseableHttpClient client;
+	private long cursor;
 	private final String 
 		BASE_URL, 	// set in /config/harvester-props.xml
 		TOKEN,		// ditto
@@ -37,6 +38,7 @@ public class HypothesisClient {
 		BASE_URL = environment.getStringProperty("BaseURL");
 		TOKEN = environment.getStringProperty("DeveloperToken");
 		GROUP_ID = environment.getStringProperty("GroupId");
+		cursor = environment.getCursor();
 		// create the final URL
 		FINAL_URL = BASE_URL+"?group="+GROUP_ID;
 		System.out.println(FINAL_URL);
@@ -89,15 +91,48 @@ public class HypothesisClient {
 	}
 	
 	/**
-	 * Load some annotations
-	 * @param start
-	 * @param count
+	 * Load some annotations based on <code>cursor</code>
 	 * @return {@link JSONObject}
 	 */
-	public IResult loadSomeAnnotations(int start, int count) {
+	public IResult loadSomeAnnotations() {
+		cursor = environment.getCursor();
 		IResult result = new ResultPojo();
-		//TODO
-		return result;
+		HttpGet httpGet = new HttpGet(FINAL_URL+"&offset="+cursor);
+		httpGet.addHeader("Accept", "application/json");
+		// authenticate
+		httpGet.addHeader("Authorization", "Bearer "+TOKEN);
+		CloseableHttpResponse response1 = null;
+		try {
+			// execute the get
+			response1 = client.execute(httpGet);
+			// System.out.println(response1.getStatusLine());
+			HttpEntity entity1 = response1.getEntity();
+			if (entity1 != null) {
+				//Turn content into a JSONObject
+				//System.out.println("ContentSize "+entity1.getContentLength());
+				InputStream is = entity1.getContent();
+				JSONParser p = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+				JSONObject obj = (JSONObject)p.parse(is);
+				//return the JSONObject for late processing
+				result.setResultObject(obj);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.addErrorString(e.getMessage());
+			environment.logError(e.getMessage(), e);
+		} finally {
+			if (response1 != null) {
+				try {
+					response1.close();
+				} catch (Exception x) {
+					x.printStackTrace();
+					result.addErrorString(x.getMessage());
+					environment.logError(x.getMessage(), x);
+				}
+				response1 = null;
+			}
+		}		return result;
 	}
 
 }
