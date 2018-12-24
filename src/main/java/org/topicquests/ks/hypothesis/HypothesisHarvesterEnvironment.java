@@ -19,13 +19,15 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	private RealtimeSocket socket;
 	private File cursorFile;
 	private long cursor = 0;
+	private Analyzer analyzer;
 	/**
 	 * 
 	 */
 	public HypothesisHarvesterEnvironment() {
 		super("harvester-props.xml", "logger.properties");
 		client = new HypothesisClient(this);
-		processor = new JSONProcessor(this);
+		analyzer = new Analyzer(this);
+		processor = new JSONProcessor(this, analyzer);
 		socket = new RealtimeSocket(this);
 		startCursor();
 	}
@@ -92,5 +94,6 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	public void shutDown() {
 		System.out.println("Shutting down");
 		saveCursor();
+		analyzer.shutDown();
 	}
 }

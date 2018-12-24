@@ -18,13 +18,15 @@ import net.minidev.json.JSONObject;
  */
 public class JSONProcessor {
 	private HypothesisHarvesterEnvironment environment;
+	private Analyzer analyzer;
 	private PrintWriter out;
 	/**
 	 * @param env
 	 */
-	public JSONProcessor(HypothesisHarvesterEnvironment env) {
+	public JSONProcessor(HypothesisHarvesterEnvironment env, Analyzer a) {
 		environment = env;
-		debugSetup();
+		analyzer = a;
+		//debugSetup();
 	}
 /**
  * A plan is to:
@@ -53,11 +55,12 @@ public class JSONProcessor {
 			//System.out.println("JX "+jx);
 			while (itr.hasNext()) {
 				jx = (JSONObject)itr.next();
-				this.saveJSON(jx);
+				//this.saveJSON(jx);
+				analyzer.addAnnotation(jx);
 				cursor++;
 			}
 			environment.updateCursor(cursor);
-			debugEnd();
+			//debugEnd();
 		}
 		return result;
 	}
