@@ -19,11 +19,13 @@ public class FirstProcessorTest extends TestRoot {
 	public FirstProcessorTest() {
 		IResult r = client.loadSomeAnnotations();
 		JSONObject jo = (JSONObject)r.getResultObject();
-		System.out.println("A "+r.getErrorString());
-		System.out.println("B "+jo);
+		System.out.println("AAA "+r.getErrorString());
+		System.out.println("BBB "+jo);
 		processor.processJSON(jo);
-		environment.shutDown();
-		System.exit(0);
+		//You don't shut down a threaded platform
+		// let it shut itself down when harvest exhausts
+		//environment.shutDown();
+		//System.exit(0);
 	}
 
 }

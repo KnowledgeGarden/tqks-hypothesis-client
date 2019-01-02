@@ -16,7 +16,8 @@ public class TestFramework {
 	public static void main(String[] args) {
 		//new BootTest();
 		//new FirstClientTest();
-		new FirstProcessorTest();
+		//new FirstProcessorTest();
+		new HarvestTest();
 	}
 
 }

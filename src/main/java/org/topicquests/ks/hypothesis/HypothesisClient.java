@@ -22,6 +22,7 @@ import net.minidev.json.parser.JSONParser;
 public class HypothesisClient {
 	private HypothesisHarvesterEnvironment environment;
 	private CloseableHttpClient client;
+	private JSONProcessor processor;
 	private long cursor;
 	private final String 
 		BASE_URL, 	// set in /config/harvester-props.xml
@@ -42,6 +43,10 @@ public class HypothesisClient {
 		// create the final URL
 		FINAL_URL = BASE_URL+"?group="+GROUP_ID;
 		System.out.println(FINAL_URL);
+	}
+	
+	public void setProcessor(JSONProcessor p) {
+		this.processor = p;
 	}
 	
 	/**
@@ -132,7 +137,21 @@ public class HypothesisClient {
 				}
 				response1 = null;
 			}
-		}		return result;
+		}
+		return result;
 	}
 
+	public IResult harvest() {
+		IResult result = new ResultPojo();
+		IResult r = this.loadSomeAnnotations();
+		JSONObject jo = (JSONObject)r.getResultObject();
+		long limit = Long.parseLong(jo.getAsString("total"));
+		while (jo != null && (environment.getCursor() < limit)) {
+			processor.processJSON(jo);
+			r = this.loadSomeAnnotations();
+			jo = (JSONObject)r.getResultObject();
+		}
+		environment.shutDown();
+		return result;
+	}
 }

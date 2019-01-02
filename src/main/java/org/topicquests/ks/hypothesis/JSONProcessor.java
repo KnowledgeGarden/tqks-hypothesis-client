@@ -42,6 +42,7 @@ public class JSONProcessor {
 	 * @return
 	 */
 	public IResult processJSON(JSONObject jo) {
+		System.out.println("PROCESSING "+jo);
 		IResult result = new ResultPojo();
 		JSONArray list = (JSONArray)jo.get("rows");
 		JSONObject jx;
