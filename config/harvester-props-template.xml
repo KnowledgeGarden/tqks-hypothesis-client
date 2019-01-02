@@ -7,8 +7,18 @@
 		api and annotations REST values -->
 	<parameter name="BaseURL" value="https://hypothes.is/api/search" />
 	
-	<!-- Must be determined from your hypothes.is account -->
+	<!-- 
+		Must be determined from your hypothes.is account 
+		This is for single account harvesting -->
 	<parameter name="GroupId" value="changeME" />
+	
+	<!--
+		This is for a list of name/id pairs to harvest 
+	 -->
+	<list name="Groups">
+		<parameter name="somename" value="changeMe" />
+		<parameter name="anothername" value="changeMe" />	
+	</list>
 	
 	<!-- Must acquire a TOKEN from 
 		https://hypothes.is/account/developer -->
