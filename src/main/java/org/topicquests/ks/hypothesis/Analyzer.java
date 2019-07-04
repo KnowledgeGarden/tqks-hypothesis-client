@@ -18,6 +18,10 @@ public class Analyzer {
 	private List<JSONObject> annotations;
 	private boolean isRunning = true;
 	private Worker thread;
+	private Set<String> users;
+	private Set<String> resources;
+	private Set<String> tags;
+
 	/**
 	 * 
 	 */
@@ -25,10 +29,20 @@ public class Analyzer {
 		environment = env;
 		listener = l;
 		annotations = new ArrayList<JSONObject>();
+		users = new HashSet<String>();
+		resources = new HashSet<String>();
+		tags = new HashSet<String>();
+
 		thread = new Worker();
 		thread.start();
 	}
 	
+	/**
+	 * Deal with the  users/resources/tags collections
+	 */
+	public void finishHarvest() {
+		listener.acceptMeta(this.users, this.resources, this.tags);
+	}
 	/**
 	 * Adds between 1 and 20 annotations per <code>jo</code>
 	 * @param jo
@@ -115,8 +129,12 @@ public class Analyzer {
 			title = tx.get(0); //TODO do we have more than one title?
 		String user = jo.getAsString("user");
 		user = user.substring(5);
+		if (user != null && !user.equals(""))
+			this.users.add(user);
 		String text = jo.getAsString("text");
 		String uri = jo.getAsString("uri");
+		if (uri != null && !uri.equals(""))
+			this.resources.add(uri);
 		//debug
 		if (uri.indexOf("biorxiv") > -1) {
 			environment.logDebug("XXXX "+jo);
@@ -141,12 +159,16 @@ public class Analyzer {
 				annotation = jx.getAsString("exact");
 			}
 		}
-		ljo = (List<JSONObject>)jo.get("tags");
-		if (uri.indexOf("biorxiv") > -1) {
-			environment.logDebug("YYYY "+ljo);
+		List<String> tgs= (List<String>)jo.get("tags");
+		//if (uri.indexOf("biorxiv") > -1) {
+		//	environment.logDebug("YYYY "+ljo);
+		//}
+		jx = new JSONObject();
+		if (tgs != null && !tgs.isEmpty()) {
+			jx.put("tags", tgs);
+			this.tags.addAll(tgs);
 		}
 		//create a new object
-		jx = new JSONObject();
 		jx.put("id", id);
 		jx.put("group", group);
 		jx.put("uri", uri);
@@ -155,7 +177,7 @@ public class Analyzer {
 		jx.put("text", text);
 		jx.put("created", created);
 		jx.put("user", user);
-		jx.put("tags", ljo);
+		
 		//we now have a processed object:
 		// annotation, text note, tags, provenance
 		// time to send it on its way for further processing

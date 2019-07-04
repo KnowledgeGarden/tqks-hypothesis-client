@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<!-- ElasticSearchClient properties
+	-->
+
+<properties>
+
+	<!-- Model created for a local, embedded index 
+	<parameter name="Model" value="org.topicquests.persist.json.es.ElasticSearchEmbeddedModel" /> -->
+	
+	<!-- Model created for remote and cluster servers -->
+	<parameter name="Model" value="org.topicquests.persist.json.es.ElasticSearchClusterModel" /> 
+	
+	<!-- This is a plugin model which allows developers to create
+		custom query DSLs according to specific needs -->
+	<parameter name="NumShards" value="1"/>
+	<parameter name="NumDuplicates" value="0"/>
+	
+	
+	<!-- Multiple entries possible for clusters -->
+	<list name="Clusters">
+		<parameter name="localhost" value="9200" /> 
+	</list>
+
+	<!-- Index must be lowercase
+	     name is the index; value is which mappings file to use 
+	     FOR NOW, TQElasticProvider supports just one INDEX 
+	     FOR Hypothesis, names must conform to groupId which
+	     will be used as ElasticSearch index names -->
+	<list name="IndexNames">
+		<parameter name="annotations" value = "mappings.json" />
+		<parameter name="annotations_meta" value = "mappings.json" />
+	</list>
+
+</properties>
+

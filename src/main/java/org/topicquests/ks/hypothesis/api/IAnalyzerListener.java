@@ -3,6 +3,8 @@
  */
 package org.topicquests.ks.hypothesis.api;
 
+import java.util.Set;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -19,5 +21,7 @@ public interface IAnalyzerListener {
 	 */
 	void acceptAnalyzedAnnotation(JSONObject annotation);
 
+	void acceptMeta(Set<String>users, Set<String>resources, Set<String>tags);
+	
 	JSONArray getData();
 }

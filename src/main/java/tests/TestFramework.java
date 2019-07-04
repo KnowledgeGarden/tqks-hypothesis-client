@@ -18,6 +18,7 @@ public class TestFramework {
 		//new FirstClientTest();
 		//new FirstProcessorTest();
 		new HarvestTest();
+		//new ListTags();
 	}
 
 }

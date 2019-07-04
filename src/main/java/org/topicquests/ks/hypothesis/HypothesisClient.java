@@ -155,23 +155,29 @@ public class HypothesisClient {
 		JSONArray ja = new JSONArray();
 		result.setResultObject(ja);
 		IResult r = null;
-		//List<List<String>> groups = (List<List<String>>)environment.getProperty("Groups")
-	    //String groupId = null;
 		JSONObject jo;
 		r = this.loadSomeAnnotations(GROUP_ID);
-		//for (int i=0;i<groups.size();i++) {
-		//	groupId = groups.get(i).get(1);
-			jo = (JSONObject)r.getResultObject();
+		jo = (JSONObject)r.getResultObject();
+		environment.logDebug("FIRSTLOAD "+jo);
+		if (jo != null) {
 			long limit = Long.parseLong(jo.getAsString("total"));
-			while (jo != null && (environment.getCursor() < limit)) {
+			while (jo != null && sanity(jo) && (environment.getCursor() < limit)) {
 				processor.processJSON(jo);
 				r = this.loadSomeAnnotations(GROUP_ID);
 				jo = (JSONObject)r.getResultObject();
-				if (jo != null)
+				if (jo != null && sanity(jo))
 					ja.add(jo);
 			}
-		//}
+			processor.loadingDone();
+		}
 		environment.shutDown();
 		return result;
+	}
+	
+	boolean sanity(JSONObject jo) {
+		String x = jo.getAsString("status");
+		if (x != null && x.equals("failure"))
+			return false;
+		return true;
 	}
 }

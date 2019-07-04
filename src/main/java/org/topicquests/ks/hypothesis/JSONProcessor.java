@@ -60,12 +60,16 @@ public class JSONProcessor {
 				analyzer.addAnnotation(jx);
 				cursor++;
 			}
+			
 			environment.updateCursor(cursor);
 			//debugEnd();
 		}
 		return result;
 	}
 
+	public void loadingDone() {
+		analyzer.finishHarvest();
+	}
 	void debugSetup() {
 		try {
 			File f = new File("test/"+System.currentTimeMillis()+".json");
