@@ -108,7 +108,8 @@ public class Analyzer {
 		System.out.println("Analyzing Annotation "+jo);
 		String id = jo.getAsString("id");
 		String created = jo.getAsString("created");
-		List<String> tx = (List<String>)jo.get("document.title");
+		JSONObject jt = (JSONObject)jo.get("document");
+		List<String> tx = (List<String>)jt.get("title");
 		String title = "";
 		if (tx != null)
 			title = tx.get(0); //TODO do we have more than one title?
@@ -116,6 +117,10 @@ public class Analyzer {
 		user = user.substring(5);
 		String text = jo.getAsString("text");
 		String uri = jo.getAsString("uri");
+		//debug
+		if (uri.indexOf("biorxiv") > -1) {
+			environment.logDebug("XXXX "+jo);
+		}
 		String group = jo.getAsString("group");
 		ljo = (List<JSONObject>)jo.get("target");
 		environment.logDebug("XXX "+ljo);
@@ -137,6 +142,9 @@ public class Analyzer {
 			}
 		}
 		ljo = (List<JSONObject>)jo.get("tags");
+		if (uri.indexOf("biorxiv") > -1) {
+			environment.logDebug("YYYY "+ljo);
+		}
 		//create a new object
 		jx = new JSONObject();
 		jx.put("id", id);

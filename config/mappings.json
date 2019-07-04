@@ -1,0 +1,47 @@
+{
+    "core": {
+	"properties": {
+	 "id": {
+		"index": "true",
+		"type": "keyword",
+		"store": true
+	 },
+	 "group": {
+		"index": "true",
+		"type": "keyword",
+		"store": true
+	  },
+	 "annotation": {
+		"index": "true",
+		"type": "keyword",
+		"store": true
+	  },
+	 "text": {
+		"index": "true",
+		"type": "keyword",
+		"store": true
+	  },
+	 "user": {
+		"index": "true",
+		"type": "keyword",
+		"store": true
+	  },
+	 "title": {
+		"index": "true",
+		"type": "keyword",
+		"store": true
+	  },
+	 "uri": {
+		"index": "true",
+		"type": "keyword",
+		"store": true
+	  },
+	 "created": {
+		"index": "true",
+		"type": "keyword",
+		"store": true
+	  }
+
+    }
+    }
+}

@@ -3,6 +3,7 @@
  */
 package org.topicquests.ks.hypothesis.api;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 /**
@@ -17,4 +18,6 @@ public interface IAnalyzerListener {
 	 * @param annotation
 	 */
 	void acceptAnalyzedAnnotation(JSONObject annotation);
+
+	JSONArray getData();
 }

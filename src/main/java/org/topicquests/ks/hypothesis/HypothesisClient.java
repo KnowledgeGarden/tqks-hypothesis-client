@@ -3,6 +3,8 @@
  */
 package org.topicquests.ks.hypothesis;
 import java.io.*;
+import java.util.List;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -12,6 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.topicquests.support.ResultPojo;
 import org.topicquests.support.api.IResult;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
@@ -97,12 +100,14 @@ public class HypothesisClient {
 	
 	/**
 	 * Load some annotations based on <code>cursor</code>
+	 * @link GroupId
 	 * @return {@link JSONObject}
 	 */
-	public IResult loadSomeAnnotations() {
+	public IResult loadSomeAnnotations(String GroupID) {
 		cursor = environment.getCursor();
+		final String MyURL = BASE_URL+"?group="+GroupID;
 		IResult result = new ResultPojo();
-		HttpGet httpGet = new HttpGet(FINAL_URL+"&offset="+cursor);
+		HttpGet httpGet = new HttpGet(MyURL+"&offset="+cursor);
 		httpGet.addHeader("Accept", "application/json");
 		// authenticate
 		httpGet.addHeader("Authorization", "Bearer "+TOKEN);
@@ -114,7 +119,7 @@ public class HypothesisClient {
 			HttpEntity entity1 = response1.getEntity();
 			if (entity1 != null) {
 				//Turn content into a JSONObject
-				//System.out.println("ContentSize "+entity1.getContentLength());
+				System.out.println("ContentSize "+entity1.getContentLength());
 				InputStream is = entity1.getContent();
 				JSONParser p = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
 				JSONObject obj = (JSONObject)p.parse(is);
@@ -141,16 +146,31 @@ public class HypothesisClient {
 		return result;
 	}
 
+	/**
+	 * Harvest everything
+	 * @return
+	 */
 	public IResult harvest() {
 		IResult result = new ResultPojo();
-		IResult r = this.loadSomeAnnotations();
-		JSONObject jo = (JSONObject)r.getResultObject();
-		long limit = Long.parseLong(jo.getAsString("total"));
-		while (jo != null && (environment.getCursor() < limit)) {
-			processor.processJSON(jo);
-			r = this.loadSomeAnnotations();
+		JSONArray ja = new JSONArray();
+		result.setResultObject(ja);
+		IResult r = null;
+		//List<List<String>> groups = (List<List<String>>)environment.getProperty("Groups")
+	    //String groupId = null;
+		JSONObject jo;
+		r = this.loadSomeAnnotations(GROUP_ID);
+		//for (int i=0;i<groups.size();i++) {
+		//	groupId = groups.get(i).get(1);
 			jo = (JSONObject)r.getResultObject();
-		}
+			long limit = Long.parseLong(jo.getAsString("total"));
+			while (jo != null && (environment.getCursor() < limit)) {
+				processor.processJSON(jo);
+				r = this.loadSomeAnnotations(GROUP_ID);
+				jo = (JSONObject)r.getResultObject();
+				if (jo != null)
+					ja.add(jo);
+			}
+		//}
 		environment.shutDown();
 		return result;
 	}

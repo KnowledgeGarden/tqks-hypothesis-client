@@ -5,6 +5,7 @@ package org.topicquests.ks.hypothesis;
 
 import java.io.File;
 
+import org.topicquests.es.ProviderEnvironment;
 import org.topicquests.ks.hypothesis.api.IAnalyzerListener;
 import org.topicquests.support.RootEnvironment;
 import org.topicquests.support.util.TextFileHandler;
@@ -23,12 +24,16 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	private Analyzer analyzer;
 	private IAnalyzerListener listener;
 	private TextFileHandler h;
+	private ProviderEnvironment esProvider;  // Elasticsearch provider
+
 	/**
 	 * 
 	 */
 	public HypothesisHarvesterEnvironment() {
 		super("harvester-props.xml", "logger.properties");
 		client = new HypothesisClient(this);
+	    esProvider = new ProviderEnvironment();
+
 		listener = new AnalyzerListener(this);
 		analyzer = new Analyzer(this, listener);
 		processor = new JSONProcessor(this, analyzer);
@@ -44,6 +49,14 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	 * /
 	public RealtimeSocket getSocket() {
 		return socket;
+	}*/
+	
+	/**
+	 * Return the ElasticSearch Environment
+	 * @return
+	 */
+	public ProviderEnvironment getElasticSearchProvider() {
+		return esProvider;
 	}
 	
 	/**
@@ -54,6 +67,9 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 		return processor;
 	}
 	
+	public IAnalyzerListener getListener() {
+		return listener;
+	}
 	/**
 	 * Return client which performs bulk annotation downloads
 	 * @return

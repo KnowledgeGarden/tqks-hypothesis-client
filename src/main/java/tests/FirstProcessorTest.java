@@ -17,7 +17,7 @@ public class FirstProcessorTest extends TestRoot {
 	 * 
 	 */
 	public FirstProcessorTest() {
-		IResult r = client.loadSomeAnnotations();
+		IResult r = client.loadSomeAnnotations("n9iXjarQ");
 		JSONObject jo = (JSONObject)r.getResultObject();
 		System.out.println("AAA "+r.getErrorString());
 		System.out.println("BBB "+jo);

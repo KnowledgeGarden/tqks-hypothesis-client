@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.topicquests</groupId>
     <artifactId>HypothesisHarvester</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <name>HypothesisHarvester</name>
     <developers>
         <developer>
@@ -38,6 +38,15 @@
     </repositories>
     <build>
         <plugins>
+        <!-- required for jdk > 1.8 -->
+       <plugin>
+       		<groupId>org.apache.maven.plugins</groupId>
+       		<artifactId>maven-compiler-plugin</artifactId>
+       		<configuration>
+           		<source>1.6</source>
+           		<target>1.6</target>
+       		</configuration>
+		</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -273,20 +282,10 @@
 		  <artifactId>Java-WebSocket</artifactId>
 		  <version>1.3.9</version>
 		</dependency>
-  		<dependency>
-        		<groupId>net.minidev</groupId>
-        		<artifactId>json-smart</artifactId>
-        		<version>2.2.1</version>
-      	</dependency>
-      	<dependency>
-        		<groupId>net.minidev</groupId>
-	        <artifactId>accessors-smart</artifactId>
-	        <version>1.1</version>
-	    </dependency>
 		<dependency>
 			<groupId>org.topicquests</groupId>
 			<artifactId>tq-support</artifactId>
-			<version>1.7.3-SNAPSHOT</version>
+			<version>1.8.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -302,6 +301,11 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
 			<version>4.5.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.topicquests</groupId>
+			<artifactId>tqks-elastic6-provider</artifactId>
+			<version>0.4.0-SNAPSHOT</version>
 		</dependency>
     </dependencies>
     <reporting>
