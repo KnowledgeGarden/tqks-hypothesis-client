@@ -13,12 +13,12 @@
 	  },
 	 "annotation": {
 		"index": "true",
-		"type": "keyword",
+		"type": "text",
 		"store": true
 	  },
 	 "text": {
 		"index": "true",
-		"type": "keyword",
+		"type": "text",
 		"store": true
 	  },
 	 "user": {
@@ -28,7 +28,7 @@
 	  },
 	 "title": {
 		"index": "true",
-		"type": "keyword",
+		"type": "text",
 		"store": true
 	  },
 	 "uri": {
