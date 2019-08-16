@@ -41,7 +41,7 @@ public class Analyzer {
 	 * Deal with the  users/resources/tags collections
 	 */
 	public void finishHarvest() {
-		listener.acceptMeta(this.users, this.resources, this.tags);
+		//nothing to do
 	}
 	/**
 	 * Adds between 1 and 20 annotations per <code>jo</code>
@@ -119,70 +119,78 @@ public class Analyzer {
 		JSONObject jx;
 		List<JSONObject> ljo = null;
 		try {
-		System.out.println("Analyzing Annotation "+jo);
-		String id = jo.getAsString("id");
-		String created = jo.getAsString("created");
-		JSONObject jt = (JSONObject)jo.get("document");
-		List<String> tx = (List<String>)jt.get("title");
-		String title = "";
-		if (tx != null)
-			title = tx.get(0); //TODO do we have more than one title?
-		String user = jo.getAsString("user");
-		user = user.substring(5);
-		if (user != null && !user.equals(""))
-			this.users.add(user);
-		String text = jo.getAsString("text");
-		String uri = jo.getAsString("uri");
-		if (uri != null && !uri.equals(""))
-			this.resources.add(uri);
-		//debug
-		if (uri.indexOf("biorxiv") > -1) {
-			environment.logDebug("XXXX "+jo);
-		}
-		String group = jo.getAsString("group");
-		ljo = (List<JSONObject>)jo.get("target");
-		environment.logDebug("XXX "+ljo);
-		String annotation = null;
-		if (ljo != null) {
-			jx = (JSONObject)ljo.get(0);
-			ljo = (List<JSONObject>)jx.get("selector");
-			environment.logDebug("LJO "+ljo);
-			//NOTE: it is possible that there is no annotation
-			// in which case, no "selector"
-			if (ljo != null) {
-				int where = 3;
-				if (ljo.size() == 3)
-					where = 2;
-				else if (ljo.size() == 2)
-					where = 1;
-				jx = (JSONObject)ljo.get(where);
-				annotation = jx.getAsString("exact");
+			System.out.println("Analyzing Annotation "+jo);
+			String id = jo.getAsString("id");
+			String created = jo.getAsString("created");
+			JSONObject jt = (JSONObject)jo.get("document");
+			List<String> tx = (List<String>)jt.get("title");
+			String title = "";
+			if (tx != null)
+				title = tx.get(0); //TODO do we have more than one title?
+			String user = jo.getAsString("user");
+			user = user.substring(5);
+			if (user != null && !user.equals(""))
+				this.users.add(user);
+			String text = jo.getAsString("text");
+			String uri = jo.getAsString("uri");
+			if (uri != null && !uri.equals("")) {
+				int where = uri.indexOf("?");
+				if (where > -1) {
+					uri = uri.substring(0, (where-1));
+				}
+				this.resources.add(uri);
 			}
-		}
-		List<String> tgs= (List<String>)jo.get("tags");
-		//if (uri.indexOf("biorxiv") > -1) {
-		//	environment.logDebug("YYYY "+ljo);
-		//}
-		jx = new JSONObject();
-		if (tgs != null && !tgs.isEmpty()) {
-			jx.put("tags", tgs);
-			this.tags.addAll(tgs);
-		}
-		//create a new object
-		jx.put("id", id);
-		jx.put("group", group);
-		jx.put("uri", uri);
-		jx.put("title", title);
-		jx.put("annotation", annotation);
-		jx.put("text", text);
-		jx.put("created", created);
-		jx.put("user", user);
-		
-		//we now have a processed object:
-		// annotation, text note, tags, provenance
-		// time to send it on its way for further processing
-		//System.out.println("Analyzed Annotation "+jx);
-		listener.acceptAnalyzedAnnotation(jx);
+			//debug
+			if (uri.indexOf("biorxiv") > -1) {
+				environment.logDebug("XXXX "+jo);
+			}
+			String group = jo.getAsString("group");
+			ljo = (List<JSONObject>)jo.get("target");
+			environment.logDebug("XXX "+ljo);
+			String annotation = null;
+			if (ljo != null) {
+				jx = (JSONObject)ljo.get(0);
+				ljo = (List<JSONObject>)jx.get("selector");
+				environment.logDebug("LJO "+ljo);
+				//NOTE: it is possible that there is no annotation
+				// in which case, no "selector"
+				if (ljo != null) {
+					int where = 3;
+					if (ljo.size() == 3)
+						where = 2;
+					else if (ljo.size() == 2)
+						where = 1;
+					else if (ljo.size() == 1)
+						where = 0;
+					jx = (JSONObject)ljo.get(where);
+					annotation = jx.getAsString("exact");
+				}
+			}
+			List<String> tgs= (List<String>)jo.get("tags");
+			environment.logDebug("AnalTags "+tgs);
+			//if (uri.indexOf("biorxiv") > -1) {
+			//	environment.logDebug("YYYY "+ljo);
+			//}
+			jx = new JSONObject();
+			if (tgs != null && !tgs.isEmpty()) {
+				jx.put("tags", tgs);
+				this.tags.addAll(tgs);
+			}
+			//create a new object
+			jx.put("id", id);
+			jx.put("group", group);
+			jx.put("uri", uri);
+			jx.put("title", title);
+			jx.put("annotation", annotation);
+			jx.put("text", text);
+			jx.put("created", created);
+			jx.put("user", user);
+			
+			//we now have a processed object:
+			// annotation, text note, tags, provenance
+			// time to send it on its way for further processing
+			//System.out.println("Analyzed Annotation "+jx);
+			listener.acceptAnalyzedAnnotation(jx);
 		} catch (Exception e) {
 			environment.logError(e.getMessage()+" | "+ljo, e);
 		}

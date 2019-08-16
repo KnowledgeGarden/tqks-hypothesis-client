@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.topicquests</groupId>
     <artifactId>HypothesisHarvester</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <name>HypothesisHarvester</name>
     <developers>
         <developer>
@@ -306,6 +306,11 @@
 			<groupId>org.topicquests</groupId>
 			<artifactId>tqks-elastic6-provider</artifactId>
 			<version>0.4.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.topicquests</groupId>
+			<artifactId>tqks-postgresql-provider</artifactId>
+			<version>0.10.0-SNAPSHOT</version>
 		</dependency>
     </dependencies>
     <reporting>

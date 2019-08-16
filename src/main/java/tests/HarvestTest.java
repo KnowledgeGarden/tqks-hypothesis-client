@@ -21,7 +21,7 @@ public class HarvestTest extends TestRoot {
 	public HarvestTest() {
 		IResult r = client.harvest();
 		
-		saveResults(environment.getListener().getData());
+		//saveResults(environment.getListener().getData());
 	}
 	
 	void saveResults(JSONArray ja) {

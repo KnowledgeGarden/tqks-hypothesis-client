@@ -7,6 +7,9 @@
 		api and annotations REST values -->
 	<parameter name="BaseURL" value="https://hypothes.is/api/search" />
 	
+	<parameter name="DatabaseName" value = "tagomizer_database" />
+	<parameter name="DatabaseSchema" value = "tq_tagomizer" />
+	
 	<!-- 
 		Must be determined from your hypothes.is account 
 		This is for single account harvesting -->
@@ -24,7 +27,8 @@
 		https://hypothes.is/account/developer -->
 	<parameter name="DeveloperToken" value="changeME" />
 
-	<!-- https://h.readthedocs.io/en/latest/api/realtime/ -->
+	<!-- https://h.readthedocs.io/en/latest/api/realtime/ 
+		Deprecated, not going to happen -->
 	<parameter name="RealtimeURL" value="wss://hypothes.is/ws" />
 
 </properties>

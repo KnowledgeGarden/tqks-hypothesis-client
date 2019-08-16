@@ -26,6 +26,7 @@ public class HypothesisClient {
 	private HypothesisHarvesterEnvironment environment;
 	private CloseableHttpClient client;
 	private JSONProcessor processor;
+	private Object waitObject = new Object();
 	private long cursor;
 	private final String 
 		BASE_URL, 	// set in /config/harvester-props.xml
@@ -105,6 +106,12 @@ public class HypothesisClient {
 	 */
 	public IResult loadSomeAnnotations(String GroupID) {
 		cursor = environment.getCursor();
+		//wait a while
+		synchronized(waitObject) {
+			try {
+				waitObject.wait(5000);
+			} catch (Exception e) {}
+		}
 		final String MyURL = BASE_URL+"?group="+GroupID;
 		IResult result = new ResultPojo();
 		HttpGet httpGet = new HttpGet(MyURL+"&offset="+cursor);

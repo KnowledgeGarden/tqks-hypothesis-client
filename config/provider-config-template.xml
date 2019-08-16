@@ -28,7 +28,6 @@
 	     will be used as ElasticSearch index names -->
 	<list name="IndexNames">
 		<parameter name="annotations" value = "mappings.json" />
-		<parameter name="annotations_meta" value = "mappings.json" />
 	</list>
 
 </properties>

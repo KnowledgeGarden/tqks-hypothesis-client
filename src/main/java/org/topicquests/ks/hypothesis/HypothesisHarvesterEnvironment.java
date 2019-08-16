@@ -7,6 +7,7 @@ import java.io.File;
 
 import org.topicquests.es.ProviderEnvironment;
 import org.topicquests.ks.hypothesis.api.IAnalyzerListener;
+import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.support.RootEnvironment;
 import org.topicquests.support.util.TextFileHandler;
 
@@ -25,7 +26,8 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	private IAnalyzerListener listener;
 	private TextFileHandler h;
 	private ProviderEnvironment esProvider;  // Elasticsearch provider
-
+	private PostgresConnectionFactory provider;
+	private PivotModel2 pivotModel;
 	/**
 	 * 
 	 */
@@ -33,7 +35,10 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 		super("harvester-props.xml", "logger.properties");
 		client = new HypothesisClient(this);
 	    esProvider = new ProviderEnvironment();
-
+	    String dbName = getStringProperty("DatabaseName");
+	    String schema = getStringProperty("DatabaseSchema");
+	    provider = new PostgresConnectionFactory(dbName, schema);
+	    pivotModel = new PivotModel2(this);
 		listener = new AnalyzerListener(this);
 		analyzer = new Analyzer(this, listener);
 		processor = new JSONProcessor(this, analyzer);
@@ -43,14 +48,12 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 		startCursor();
 	}
 
-	/**
-	 * Return a socket client-server for realtime monitoring annotation events
-	 * @return
-	 * /
-	public RealtimeSocket getSocket() {
-		return socket;
-	}*/
-	
+	public PivotModel2 getPivotModel() {
+		return pivotModel;
+	}
+	public PostgresConnectionFactory getProvider() {
+		return provider;
+	}
 	/**
 	 * Return the ElasticSearch Environment
 	 * @return

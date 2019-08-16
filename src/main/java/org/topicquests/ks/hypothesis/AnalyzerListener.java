@@ -20,14 +20,15 @@ public class AnalyzerListener implements IAnalyzerListener {
 	private HypothesisHarvesterEnvironment environment;
 	private JSONArray anas;
 	private IClient esClient;
+	private PivotModel2 pivotModel;
 	private final String 
-		INDEX = "annotations",
-		META = INDEX+"_meta";
+		INDEX = "annotations";
 	/**
 	 * 
 	 */
 	public AnalyzerListener(HypothesisHarvesterEnvironment env) {
 		environment = env;
+		pivotModel = environment.getPivotModel();
 		esClient = environment.getElasticSearchProvider().getProvider();
 		anas = new JSONArray();
 	}
@@ -41,37 +42,14 @@ public class AnalyzerListener implements IAnalyzerListener {
 	@Override
 	public void acceptAnalyzedAnnotation(JSONObject annotation) {
 		esClient.put(annotation.getAsString("id"), INDEX, annotation);
+		pivotModel.processPivotData(
+				annotation.getAsString("id"),
+				annotation.getAsString("user"),
+				annotation.getAsString("uri"),
+				annotation.getAsString("title"),
+				(List<String>)annotation.get("tags"));
 		anas.add(annotation);
 		environment.logDebug("Annotations "+anas.size());
-	}
-
-	@Override
-	public void acceptMeta(Set<String> users, Set<String> resources, Set<String> tags) {
-		IResult r = esClient.get("_meta", META);
-		JSONObject jo = (JSONObject)r.getResultObject();
-		List<String> l;
-		if (jo != null) {
-			l = (List<String>)jo.get("users");
-			if (l != null && !l.isEmpty())
-				users.addAll(l);
-			l = (List<String>)jo.get("resources");
-			if (l != null && !l.isEmpty())
-				resources.addAll(l);
-			l = (List<String>)jo.get("tags");
-			if (l != null && !l.isEmpty())
-				tags.addAll(l);
-		}
-		jo = new JSONObject();
-		l = new ArrayList<String>();
-		l.addAll(users);
-		jo.put("users", l);
-		l = new ArrayList<String>();
-		l.addAll(resources);
-		jo.put("resources", l);
-		l = new ArrayList<String>();
-		l.addAll(tags);
-		jo.put("tags", l);
-		esClient.put("_meta", META, jo);
 	}
 
 }

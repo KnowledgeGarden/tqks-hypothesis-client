@@ -20,8 +20,6 @@ public interface IAnalyzerListener {
 	 * @param annotation
 	 */
 	void acceptAnalyzedAnnotation(JSONObject annotation);
-
-	void acceptMeta(Set<String>users, Set<String>resources, Set<String>tags);
 	
 	JSONArray getData();
 }
