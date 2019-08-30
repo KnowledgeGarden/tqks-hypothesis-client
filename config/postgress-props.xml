@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+
+<properties>
+	<!-- URL for the server -->
+	<parameter name="DatabaseURL" value = "localhost" />
+	<parameter name="DatabasePort" value = "5432" />
+	<parameter name="DbUser" value = "tq_admin" />
+	<parameter name="DbPwd" value = "tq-admin-pwd" />
+	<parameter name="ClientCacheSize" value = "8192" />
+</properties>
