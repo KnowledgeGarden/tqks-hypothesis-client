@@ -41,15 +41,31 @@ public class AnalyzerListener implements IAnalyzerListener {
 	 */
 	@Override
 	public void acceptAnalyzedAnnotation(JSONObject annotation) {
-		esClient.put(annotation.getAsString("id"), INDEX, annotation);
+		//take care of the document and annotations and text
+		processDocument(annotation);
+		// take care of the pivots
 		pivotModel.processPivotData(
 				annotation.getAsString("id"),
 				annotation.getAsString("user"),
 				annotation.getAsString("uri"),
 				annotation.getAsString("title"),
+				annotation.getAsString("group"),
+				annotation.getAsString("updated"),
 				(List<String>)annotation.get("tags"));
 		anas.add(annotation);
 		environment.logDebug("Annotations "+anas.size());
+	}
+	
+	void processDocument(JSONObject document) {
+		String id = document.getAsString("id");
+		String groupId = document.getAsString("group");
+		String uri = document.getAsString("uri");
+		String title = document.getAsString("title");
+		String annotation = document.getAsString("annotation");
+		String text = document.getAsString("text");
+		String created = document.getAsString("created");
+		String user = document.getAsString("user");
+		
 	}
 
 }

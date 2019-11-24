@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.topicquests.ks.hypothesis.api.ISQL;
 import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.pg.api.IPostgresConnection;
 import org.topicquests.support.ResultPojo;
@@ -38,15 +39,19 @@ public class PivotModel2 {
 	 * @param user
 	 * @param resource
 	 * @param title
+	 * @param groupId
+	 * @param created - date string
 	 * @param tags can be <code>null</code> or empty
 	 */
-	public void processPivotData(String id,
-								 String user,
+	public void processPivotData(String docId,
+								 String userId,
 								 String resource, //url
 								 String title,
+								 String groupId,
+								 String created,
 								 List<String>tags) {
 		
-		environment.logDebug("PM.processPivotData "+resource+" | "+user+" | "+tags);
+		environment.logDebug("PM.processPivotData "+resource+" | "+userId+" | "+tags);
 		IPostgresConnection conn = null;
 		IResult r = new ResultPojo();
 		boolean validTags = (tags != null && !tags.isEmpty());
@@ -56,32 +61,32 @@ public class PivotModel2 {
 			 conn = provider.getConnection();
 		     conn.setProxyRole(r);
 		     // resource --document
-		     insertDocument(conn, r, resource, title);
+		     insertDocument(conn, r, docId, resource, title, created, groupId, userId);
 		     // user
-		     insertUser(conn, r, user);
+		     insertUser(conn, r, userId, docId, groupId);
+		     // group
+		     insertGroup(conn, r, groupId, docId);
 		     // tags
 		     if (validTags) {
 		    	 itr = tags.iterator();
 		    	 while (itr.hasNext()) {
 		    		theTag = itr.next();
-		    		insertTag(conn, r, theTag);
+		    		insertTag(conn, r, this.tagToId(theTag), theTag, groupId);
 		    	 }
 		     }
 		     //pivots--references
 		     //tq_tagomizer.reference
 		     // wants id, docId from doc table, userid from user table
-		     int docId = getDocId(conn, r, resource);
-		     int userId = getUserId(conn, r, user);
-		     insertReference(conn, r, docId, userId, id);
+		     insertReference(conn, r, docId, userId);
 		     //tq_tagomizer.tag_ref
 		     // forloop on each tag
 		     // wants tagid from tag table, id
 		     itr = tags.iterator();
-		     int tagid;
+		     String tagid;
 	    	 while (itr.hasNext()) {
 	    		theTag = itr.next();
-	    		tagid = getTagId(conn, r, theTag);
-	    		insertTagReference(conn, r, tagid, id);
+	    		tagid = tagToId(theTag);
+	    		insertTagReference(conn, r, tagid, docId, groupId);
 	    	 }
 		     
 		} catch (Exception e) {
@@ -92,10 +97,21 @@ public class PivotModel2 {
 		}
 	}
 
+	String tagToId(String tagName) {
+		String result = tagName.trim();
+		result = result.replaceAll(" ", "_");
+		result = result.replaceAll("!", "x");
+		result = result.replaceAll("'", "t");
+		result = result.replaceAll(",", "c");
+		result = result.replaceAll("?", "q");
+		result = result.toLowerCase();
+		return result;
+	}
+	/*
 	int getTagId(IPostgresConnection conn, IResult r, String tag) 
 			throws Exception {
 		int result = -1;
-		String sql = "SELECT id FROM tq_tagomizer.tag where name=?";
+		String sql = ISQL.SELECT_TAG_ID_BY_NAME;
 		Object [] obj = new Object[1];
 		obj[0] = tag;
 		conn.executeSelect(sql, r, obj);
@@ -103,22 +119,25 @@ public class PivotModel2 {
 		if (rs != null && rs.next())
 			result = rs.getInt("id");
 		return result;
-	}
+	}*/
 
-	int getDocId(IPostgresConnection conn, IResult r, String url) 
+	String getDocId(IPostgresConnection conn, IResult r, String url, String groupId) 
 			throws Exception {
-		int result = -1;
-		String sql = "SELECT id FROM tq_tagomizer.document where url=?";
-		Object [] obj = new Object[1];
+		String result = null;
+		//TODO
+		// MANY Documents from Different Groups can be for the same URL
+		String sql = ISQL.SELECT_DOC_ID_BY_URL_GROUP;
+		Object [] obj = new Object[2];
 		obj[0] = url;
+		obj[1] = groupId;
 		conn.executeSelect(sql, r, obj);
 		ResultSet rs = (ResultSet)r.getResultObject();
 		if (rs != null && rs.next())
-			result = rs.getInt("id");
+			result = rs.getString("document_id");
 		return result;
 	}
 
-	int getUserId(IPostgresConnection conn, IResult r, String user) 
+	/*int getUserId(IPostgresConnection conn, IResult r, String user) 
 			throws Exception {
 		int result = -1;
 		String sql = "SELECT id FROM tq_tagomizer.huser where hyp_uid=?";
@@ -129,59 +148,80 @@ public class PivotModel2 {
 		if (rs != null && rs.next())
 			result = rs.getInt("id");
 		return result;
-	}
+	}*/
 	
-	void insertTagReference(IPostgresConnection conn, IResult r, int tagId, String id)
+	void insertTagReference(IPostgresConnection conn, IResult r, String tagId, String docId, String groupId)
 			throws Exception {
-		String sql = "INSERT  into tq_tagomizer.tag_ref VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
-		Object [] obj = new Object[2];
-		obj[0] = tagId;
-		obj[1] = id;
-		conn.beginTransaction(r);
-		conn.executeSQL(sql, r, obj);
-		conn.endTransaction(r);
-	}
-
-	void insertReference(IPostgresConnection conn, IResult r, int docId, int userId, String id)
-			throws Exception {
-		String sql = "INSERT  into tq_tagomizer.reference VALUES ( ?, ?, ? ) ON CONFLICT DO NOTHING";
+		String sql = ISQL.INSERT_TAG_REF;
 		Object [] obj = new Object[3];
-		obj[0] = id;
+		obj[0] = tagId;
 		obj[1] = docId;
-		obj[2] = userId;
+		obj[2] = groupId;
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
 	}
 
-	void insertDocument(IPostgresConnection conn, IResult r, String resource, String title)
+	void insertReference(IPostgresConnection conn, IResult r, String docId, String userId)
 			throws Exception {
-		String sql = "INSERT  into tq_tagomizer.document (url, title) VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
+		String sql = ISQL.INSERT_REFERENCE;
 		Object [] obj = new Object[2];
-		obj[0] = resource;
-		obj[1] = title;
+		obj[0] = docId;
+		obj[1] = userId;
+		conn.beginTransaction(r);
+		conn.executeSQL(sql, r, obj);
+		conn.endTransaction(r);
+	}
+
+	void insertDocument(IPostgresConnection conn, IResult r, String docId, String resource, 
+				String title, String created, String groupId, String userId)
+			throws Exception {
+		String sql = ISQL.INSERT_DOCUMENT;
+		Object [] obj = new Object[6];
+		obj[0] = docId;
+		obj[1] = resource;
+		obj[2] = title;
+		obj[3] = created;
+		obj[4] = groupId;
+		obj[5] = userId;
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
 	}
 	
-	void insertUser(IPostgresConnection conn, IResult r, String user)
+	void insertUser(IPostgresConnection conn, IResult r, String userId, String docId, String groupId)
 			throws Exception {
-		String sql = "INSERT  into tq_tagomizer.huser (hyp_uid) VALUES ( ? ) ON CONFLICT DO NOTHING";
-		Object [] obj = new Object[1];
-		obj[0] = user;
+		String sql = ISQL.INSERT_USER;
+		Object [] obj = new Object[3];
+		obj[0] = userId;
+		obj[1] = docId;
+		obj[2] = groupId;
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
 	}
 	
-	void insertTag(IPostgresConnection conn, IResult r, String tag)
+	void insertTag(IPostgresConnection conn, IResult r, String tagId, String tag, String groupId)
 			throws Exception {
-		String sql = "INSERT  into tq_tagomizer.tag (name) VALUES ( ? ) ON CONFLICT DO NOTHING";
-		Object [] obj = new Object[1];
-		obj[0] = tag;
+		String sql = ISQL.INSERT_TAG;
+		Object [] obj = new Object[3];
+		obj[0] = tagId;
+		obj[1] = tag;
+		obj[2] = groupId;
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
 	}
+	
+	void insertGroup(IPostgresConnection conn, IResult r, String groupId, String docId)
+			throws Exception {
+		String sql = ISQL.INSERT_GROUP;
+		Object [] obj = new Object[2];
+		obj[0] = groupId;
+		obj[1] = docId;
+		conn.beginTransaction(r);
+		conn.executeSQL(sql, r, obj);
+		conn.endTransaction(r);
+	}
+
 }
