@@ -191,7 +191,7 @@ public class PivotModel {
 		Object [] obj = new Object[3];
 		obj[0] = docId;
 		obj[1] = text;
-		obj[2] = text; // for tsvector column
+		obj[2] = text; // for tsvector column which cause text to be turned into an tsvector
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
