@@ -3,6 +3,8 @@
  */
 package org.topicquests.ks.hypothesis;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -28,6 +30,7 @@ public class HypothesisClient {
 	private JSONProcessor processor;
 	private Object waitObject = new Object();
 	private long cursor;
+	private final List<String> groups;
 	private final String 
 		BASE_URL, 	// set in /config/harvester-props.xml
 		TOKEN,		// ditto
@@ -43,10 +46,16 @@ public class HypothesisClient {
 		BASE_URL = environment.getStringProperty("BaseURL");
 		TOKEN = environment.getStringProperty("DeveloperToken");
 		GROUP_ID = environment.getStringProperty("GroupId");
-		cursor = environment.getCursor();
+		cursor = environment.getCursor(GROUP_ID);
 		// create the final URL
 		FINAL_URL = BASE_URL+"?group="+GROUP_ID;
+		groups = new ArrayList<String>();
+		List<List<String>> gl = (List<List<String>>)environment.getProperties().get("Groups");
+		Iterator<List<String>> itr = gl.iterator();
+		while (itr.hasNext())
+			groups.add(itr.next().get(1));
 		System.out.println(FINAL_URL);
+		environment.logDebug("HypothesisClient "+groups);
 	}
 	
 	public void setProcessor(JSONProcessor p) {
@@ -105,7 +114,7 @@ public class HypothesisClient {
 	 * @return {@link JSONObject}
 	 */
 	public IResult loadSomeAnnotations(String GroupID) {
-		cursor = environment.getCursor();
+		cursor = environment.getCursor(GroupID);
 		//wait a while
 		synchronized(waitObject) {
 			try {
@@ -163,19 +172,24 @@ public class HypothesisClient {
 		result.setResultObject(ja);
 		IResult r = null;
 		JSONObject jo;
-		r = this.loadSomeAnnotations(GROUP_ID);
-		jo = (JSONObject)r.getResultObject();
-		environment.logDebug("FIRSTLOAD "+jo);
-		if (jo != null) {
-			long limit = Long.parseLong(jo.getAsString("total"));
-			while (jo != null && sanity(jo) && (environment.getCursor() < limit)) {
-				processor.processJSON(jo);
-				r = this.loadSomeAnnotations(GROUP_ID);
-				jo = (JSONObject)r.getResultObject();
-				if (jo != null && sanity(jo))
-					ja.add(jo);
+		Iterator<String>itr = groups.iterator();
+		String gid;
+		while (itr.hasNext()) {
+			gid = itr.next();
+			r = this.loadSomeAnnotations(gid);
+			jo = (JSONObject)r.getResultObject();
+			environment.logDebug("FIRSTLOAD "+gid+"\n"+jo);
+			if (jo != null) {
+				long limit = Long.parseLong(jo.getAsString("total"));
+				while (jo != null && sanity(jo) && (environment.getCursor(gid) < limit)) {
+					processor.processJSON(jo);
+					r = this.loadSomeAnnotations(gid);
+					jo = (JSONObject)r.getResultObject();
+					if (jo != null && sanity(jo))
+						ja.add(jo);
+				}
+				processor.loadingDone();
 			}
-			processor.loadingDone();
 		}
 		environment.shutDown();
 		return result;

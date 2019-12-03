@@ -5,47 +5,53 @@ package org.topicquests.ks.hypothesis;
 
 import java.io.File;
 
-import org.topicquests.es.ProviderEnvironment;
 import org.topicquests.ks.hypothesis.api.IAnalyzerListener;
 import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.support.RootEnvironment;
 import org.topicquests.support.util.TextFileHandler;
+
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 /**
  * @author jackpark
  *
  */
 public class HypothesisHarvesterEnvironment extends RootEnvironment {
-	private final String CURSOR_FILE = "Cursor";
+	private final String CURSOR_FILE = "Cursor.json";
 	private HypothesisClient client;
 	private JSONProcessor processor;
-	//private RealtimeSocket socket;
+	private JSONObject cursors;
+
 	private File cursorFile;
-	private long cursor = 0;
 	private Analyzer analyzer;
 	private IAnalyzerListener listener;
 	private TextFileHandler h;
-	private ProviderEnvironment esProvider;  // Elasticsearch provider
 	private PostgresConnectionFactory provider;
 	private PivotModel2 pivotModel;
+	
 	/**
 	 * 
 	 */
 	public HypothesisHarvesterEnvironment() {
 		super("harvester-props.xml", "logger.properties");
-		client = new HypothesisClient(this);
-	    esProvider = new ProviderEnvironment();
+		h = new TextFileHandler();
+		try {
+			startCursor();
+		} catch (Exception e) {
+			// bombed trying to start cursor
+			throw new RuntimeException(e);
+		}
 	    String dbName = getStringProperty("DatabaseName");
 	    String schema = getStringProperty("DatabaseSchema");
+	    
 	    provider = new PostgresConnectionFactory(dbName, schema);
+		client = new HypothesisClient(this);
 	    pivotModel = new PivotModel2(this);
 		listener = new AnalyzerListener(this);
 		analyzer = new Analyzer(this, listener);
 		processor = new JSONProcessor(this, analyzer);
 		client.setProcessor(processor);
-		//socket = new RealtimeSocket(this);
-		h = new TextFileHandler();
-		startCursor();
 	}
 
 	public PivotModel2 getPivotModel() {
@@ -53,13 +59,6 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	}
 	public PostgresConnectionFactory getProvider() {
 		return provider;
-	}
-	/**
-	 * Return the ElasticSearch Environment
-	 * @return
-	 */
-	public ProviderEnvironment getElasticSearchProvider() {
-		return esProvider;
 	}
 	
 	/**
@@ -83,36 +82,44 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	
 	/**
 	 * Polling requires a cursor which must be persistent
+	 * @param groupId TODO
 	 * @return
 	 */
-	public long getCursor() {
-		return cursor;
+	public long getCursor(String groupId) {
+		Number n = cursors.getAsNumber(groupId);
+		if (n != null)
+			return n.longValue();
+		return 0;
 	}
 	
-	public void updateCursor(long newCursor) {
-		cursor = newCursor;
+	public void updateCursor(long newCursor, String groupId) {
+		logDebug("UPDATECURSORS "+newCursor+" "+groupId+"\n"+cursors);
+		cursors.put(groupId, new Long(newCursor));
 		//save it
 		saveCursor();
 	}
 	
-	private void startCursor() {
+	private void startCursor() throws Exception {
 		cursorFile = new File(CURSOR_FILE);
 		if (cursorFile.exists()) {
 			String s = h.readFile(cursorFile);
 			if (s != null) {
-				cursor = Long.parseLong(s);
+				JSONParser p = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+				cursors = (JSONObject)p.parse(s);
 			} else
-				cursor = 0;
+				cursors = new JSONObject();
 		} else {
-			cursor = 0;
+			cursors = new JSONObject();
 		}
+		System.out.println("ABC "+cursors);
 	}
 	
 	private void saveCursor() {
+		logDebug("SAVECURSORS "+cursorFile+"\n"+cursors);
 		if (cursorFile != null) {
-			h.writeFile(cursorFile, Long.toString(cursor));
+			h.writeFile(cursorFile, cursors.toJSONString());
 		} else {
-			h.writeFile(CURSOR_FILE, Long.toString(cursor));
+			h.writeFile(CURSOR_FILE, cursors.toJSONString());
 		}
 	}
 	

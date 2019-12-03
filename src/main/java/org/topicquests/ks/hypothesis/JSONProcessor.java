@@ -37,16 +37,17 @@ public class JSONProcessor {
  */
 	
 	/**
-	 * Process the results of a fetch
+	 * Process the results of a fetch which is a list of individual hits
 	 * @param jo
 	 * @return
 	 */
 	public IResult processJSON(JSONObject jo) {
-		System.out.println("PROCESSING "+jo);
+		environment.logDebug("JSONProcessor.processJSON\n"+jo);
+		String groupId;
 		IResult result = new ResultPojo();
 		JSONArray list = (JSONArray)jo.get("rows");
 		JSONObject jx;
-		long cursor = environment.getCursor();
+		long cursor;
 		if (list != null && !list.isEmpty()) {
 			System.out.println("NumRows "+list.size()+" | "+jo.getAsString("total"));
 			Iterator<Object> itr = list.iterator();
@@ -56,12 +57,14 @@ public class JSONProcessor {
 			//System.out.println("JX "+jx);
 			while (itr.hasNext()) {
 				jx = (JSONObject)itr.next();
+				groupId = jx.getAsString("group");
+				cursor = environment.getCursor(groupId);
 				//this.saveJSON(jx);
 				analyzer.addAnnotation(jx);
 				cursor++;
+				environment.updateCursor(cursor, groupId);
 			}
 			
-			environment.updateCursor(cursor);
 			//debugEnd();
 		}
 		return result;

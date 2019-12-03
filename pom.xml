@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.topicquests</groupId>
     <artifactId>tqks-hypothesis-client</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.4.0-SNAPSHOT</version>
     <name>tqks-hypothesis-client</name>
     <developers>
         <developer>
@@ -277,11 +277,6 @@
         </plugins>
     </build>
     <dependencies>
-    		<dependency>
-		  <groupId>org.java-websocket</groupId>
-		  <artifactId>Java-WebSocket</artifactId>
-		  <version>1.3.9</version>
-		</dependency>
 		<dependency>
 			<groupId>org.topicquests</groupId>
 			<artifactId>tq-support</artifactId>
@@ -304,13 +299,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.topicquests</groupId>
-			<artifactId>tqks-elastic6-provider</artifactId>
-			<version>0.4.0-SNAPSHOT</version>
+			<artifactId>tqks-postgresql-provider</artifactId>
+			<version>0.10.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.topicquests</groupId>
-			<artifactId>tqks-postgresql-provider</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
+			<artifactId>tqks-identity-utility</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
     </dependencies>
     <reporting>
