@@ -28,7 +28,7 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	private IAnalyzerListener listener;
 	private TextFileHandler h;
 	private PostgresConnectionFactory provider;
-	private PivotModel2 pivotModel;
+	private PivotModel pivotModel;
 	
 	/**
 	 * 
@@ -47,14 +47,14 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	    
 	    provider = new PostgresConnectionFactory(dbName, schema);
 		client = new HypothesisClient(this);
-	    pivotModel = new PivotModel2(this);
+	    pivotModel = new PivotModel(this);
 		listener = new AnalyzerListener(this);
 		analyzer = new Analyzer(this, listener);
 		processor = new JSONProcessor(this, analyzer);
 		client.setProcessor(processor);
 	}
 
-	public PivotModel2 getPivotModel() {
+	public PivotModel getPivotModel() {
 		return pivotModel;
 	}
 	public PostgresConnectionFactory getProvider() {

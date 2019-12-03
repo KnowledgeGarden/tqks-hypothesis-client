@@ -18,7 +18,7 @@ import net.minidev.json.JSONObject;
 public class AnalyzerListener implements IAnalyzerListener {
 	private HypothesisHarvesterEnvironment environment;
 	private JSONArray anas;
-	private PivotModel2 pivotModel;
+	private PivotModel pivotModel;
 	
 	/**
 	 * 

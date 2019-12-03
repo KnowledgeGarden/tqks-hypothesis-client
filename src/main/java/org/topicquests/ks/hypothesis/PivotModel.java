@@ -3,8 +3,6 @@
  */
 package org.topicquests.ks.hypothesis;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,16 +17,16 @@ import net.minidev.json.JSONObject;
 
 /**
  * @author jackpark
- * To work with newpivots.sql
+ * To work with hypothesis.sql
  */
-public class PivotModel2 {
+public class PivotModel {
 	private HypothesisHarvesterEnvironment environment;
 	private PostgresConnectionFactory provider;
 
 	/**
 	 * @param env
 	 */
-	public PivotModel2(HypothesisHarvesterEnvironment env) {
+	public PivotModel(HypothesisHarvesterEnvironment env) {
 		environment = env;
 		provider = environment.getProvider();
 	}
@@ -72,7 +70,7 @@ public class PivotModel2 {
 	}
 
 	/**
-	 * Process all the pivot data for a given annotation
+	 * Process all the pivot data for a given document
 	 * @param id
 	 * @param annotationId
 	 * @param user
@@ -82,7 +80,7 @@ public class PivotModel2 {
 	 * @param created - date string
 	 * @param tags can be <code>null</code> or empty
 	 */
-	public void processPivotData(String docId,
+	void processPivotData(String docId,
 								 String userId,
 								 String resource, //url
 								 String title,

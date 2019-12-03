@@ -10,7 +10,7 @@ package org.topicquests.ks.hypothesis.api;
 public interface ISQL {
 
 	///////////////////////////
-	// These are for used in PivotModel2
+	// These are for used in PivotModel
 	///////////////////////////
 
 	// ### tq_tagomizer.tag_ref
