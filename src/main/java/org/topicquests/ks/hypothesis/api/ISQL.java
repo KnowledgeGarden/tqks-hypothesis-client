@@ -71,7 +71,7 @@ public interface ISQL {
 	
 	/* fixed */
 	public static final String GET_RESOURCES_BY_USER =
-			"SELECT DISTINCT title, document_id FROM tq_tagomizer.document "+
+			"SELECT DISTINCT title, document_id, url FROM tq_tagomizer.document "+
 					"WHERE user_id = ? " +
 					"ORDER BY tq_tagomizer.document.title ASC LIMIT ? OFFSET ?";
 	
@@ -97,13 +97,12 @@ public interface ISQL {
 					"WHERE tq_tagomizer.tag.name = ? "+
 					"ORDER BY tq_tagomizer.huser.hyp_uid ASC LIMIT ? OFFSET ?";
 	
-	// ### tq_tagomizer.reference  tq_tagomizer.tag_ref huser
+
 	public static final String GET_TAGS_BY_USER =
-			"SELECT DISTINCT tq_tagomizer.tag.name FROM tq_tagomizer.tag "+
-					"JOIN tq_tagomizer.tag_ref ON tq_tagomizer.tag.id = tq_tagomizer.tag_ref.tag_id "+
-					"JOIN tq_tagomizer.reference ON tq_tagomizer.tag_ref.ref_id = tq_tagomizer.reference.hyp_id "+
-					"JOIN tq_tagomizer.huser ON tq_tagomizer.reference.user_id = tq_tagomizer.huser.id "+
-					"WHERE tq_tagomizer.huser.hyp_uid = ? "+
+			"SELECT DISTINCT tq_tagomizer.tag.name, tq_tagomizer.tag.id FROM tq_tagomizer.tag "+
+					"JOIN tq_tagomizer.doc_tag_ref ON tq_tagomizer.tag.id = tq_tagomizer.doc_tag_ref.tag_id "+
+					"JOIN tq_tagomizer.document ON tq_tagomizer.doc_tag_ref.document_id = tq_tagomizer.document.document_id "+
+					"WHERE tq_tagomizer.document.user_id = ? "+
 					"ORDER BY tq_tagomizer.tag.name ASC LIMIT ? OFFSET ?";
 
 	// ### tq_tagomizer.reference  tq_tagomizer.tag_ref
@@ -121,11 +120,16 @@ public interface ISQL {
 		    		"JOIN tq_tagomizer.document ON tq_tagomizer.reference.document_id = tq_tagomizer.document.id "+
 		    		"WHERE tq_tagomizer.document.url = ?";
 
+	// using tq_tagomizer.document to cluser user_id and group_id
+	public static final String GET_USERS_BY_GROUP =
+			"SELECT DISTINCT user_id from tq_tagomizer.document where group_id=?";
+
+	public static final String GET_GROUPS_BY_USER =
+			"SELECT DISTINCT group_id from tq_tagomizer.document where user_id=?";
+
 	//////////
 	//TODO
 	// Groups and text search
-	public static final String GET_USERS_BY_GROUP =
-			"";
 
 	public static final String GET_TAGS_BY_GROUP =
 			"";

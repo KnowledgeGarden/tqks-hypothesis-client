@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.*;
 
 import org.topicquests.ks.hypothesis.api.ISQL;
+import org.topicquests.ks.identity.TagIdentifier;
 import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.pg.api.IPostgresConnection;
 import org.topicquests.support.ResultPojo;
@@ -107,7 +108,7 @@ public class PivotSuite {
 		return result;
 	}
 
-	public IResult listPivotsByGroup(String groupId) {
+	public IResult listPivotsByGroup(String groupId, int start, int count) {
 		IResult result = new ResultPojo();
 		IPostgresConnection conn = null;
 		IResult r = new ResultPojo();
@@ -126,14 +127,28 @@ public class PivotSuite {
 		return result;
 	}
 
-	public IResult listPivotsByUser(String userId) {
+	public IResult listPivotsByUser(String userId, int start, int count) {
 		IResult result = new ResultPojo();
+		JSONObject pivots = new JSONObject();
+		result.setResultObject(pivots);
 		IPostgresConnection conn = null;
 		IResult r = new ResultPojo();
+		List<String> groups;
+		List<JSONObject> documents;
+		List<JSONObject> tags;
+		IResult x;
 		try {
 			 conn = provider.getConnection();
 		     conn.setProxyRole(r);
-		     //DO SOMETHING
+		     x = this.listGroupsByUser(conn, r, userId);
+		     groups = (List<String>)x.getResultObject();
+		     x = this.listResourcesByUser(conn, r, userId, start, count);
+		     documents = (List<JSONObject>)x.getResultObject();
+		     x = this.listTagsByUser(conn, r, userId, start, count);
+		     tags = (List<JSONObject>)x.getResultObject();
+		     pivots.put("groups", groups);
+		     pivots.put("documents", documents);
+		     pivots.put("tags", tags);
 		} catch (Exception e) {
 			environment.logError(e.getMessage(), e);
 			e.printStackTrace();
@@ -145,15 +160,25 @@ public class PivotSuite {
 		return result;
 	}
 
-	IResult listResourcesByUser(IPostgresConnection conn, IResult r, String userId) throws Exception {
+	/**
+	 * <p>Listing unique resources is the same as listing documents by user</p>
+	 * @param conn
+	 * @param r
+	 * @param userId
+	 * @param start
+	 * @param count
+	 * @return
+	 * @throws Exception
+	 */
+	IResult listResourcesByUser(IPostgresConnection conn, IResult r, String userId, int start, int count) throws Exception {
 		IResult result = new ResultPojo();
 		List<JSONObject> l = new ArrayList<JSONObject>();
 		result.setResultObject(l);
 		String sql = ISQL.GET_RESOURCES_BY_USER;
 		Object [] obj = new Object[3];
 		obj[0] = userId;
-		obj[1] = 1000; // limit
-		obj[2] = 0; // offset
+		obj[1] = count; // limit
+		obj[2] = start; // offset
 		conn.executeSelect(sql, r, obj);
 		ResultSet rs = (ResultSet)r.getResultObject();
 		if (rs != null) {
@@ -162,20 +187,33 @@ public class PivotSuite {
 				jo = new JSONObject();
 				jo.put("title", rs.getString(1));
 				jo.put("docId", rs.getString(2));
+				jo.put("url", rs.getString(3));
 				l.add(jo);
 			}
 		}
 		return result;
 	}
 
-	String tagToId(String tagName) {
-		String result = tagName.trim();
-		result = result.replaceAll(" ", "_");
-		result = result.replaceAll("!", "x");
-		result = result.replaceAll("'", "t");
-		result = result.replaceAll(",", "c");
-		result = result.replaceAll("?", "q");
-		result = result.toLowerCase();
+	IResult listTagsByUser(IPostgresConnection conn, IResult r, String userId, int start, int count) throws Exception {
+		IResult result = new ResultPojo();
+		List<JSONObject> l = new ArrayList<JSONObject>();
+		result.setResultObject(l);
+		String sql = ISQL.GET_TAGS_BY_USER;
+		Object [] obj = new Object[3];
+		obj[0] = userId;
+		obj[1] = count; // limit
+		obj[2] = start; // offset
+		conn.executeSelect(sql, r, obj);
+		ResultSet rs = (ResultSet)r.getResultObject();
+		if (rs != null) {
+			JSONObject jo;
+			while (rs.next()) {
+				jo = new JSONObject();
+				jo.put("label", rs.getString(1));
+				jo.put("id", rs.getString(2));
+				l.add(jo);
+			}
+		}
 		return result;
 	}
 
@@ -185,7 +223,7 @@ public class PivotSuite {
 		result.setResultObject(l);
 		String sql = ISQL.GATHER_RESOURCES_BY_TAG;
 		Object [] obj = new Object[1];
-		obj[0] = tagToId(tagName);
+		obj[0] = TagIdentifier.tagToId(tagName);
 		conn.executeSelect(sql, r, obj);
 		ResultSet rs = (ResultSet)r.getResultObject();
 		if (rs != null) {
@@ -300,5 +338,45 @@ public class PivotSuite {
 		return result;
 	}
 
+	//////////////////////////////
+	// Queries without paging
+	//////////////////////////////
+	
+	IResult listGroupsByUser(IPostgresConnection conn, IResult r, String userId) throws Exception {
+		IResult result = new ResultPojo();
+		List<String> usrs = new ArrayList<String>();
+		result.setResultObject(usrs);
+	    String sql = ISQL.GET_GROUPS_BY_USER;
+		Object [] obj = new Object[1];
+		obj[0] = userId;
+		conn.executeSelect(sql, r, obj);
+		ResultSet rs = (ResultSet)r.getResultObject();
+		if (rs != null) {
+			while (rs.next()) {
+				usrs.add(rs.getString(1));
+			}
+		}		
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
+		return result;
+	}
 
+	IResult listUsersByGroup(IPostgresConnection conn, IResult r, String groupId) throws Exception {
+		IResult result = new ResultPojo();
+		List<String> usrs = new ArrayList<String>();
+		result.setResultObject(usrs);
+	    String sql = ISQL.GET_USERS_BY_GROUP;
+		Object [] obj = new Object[1];
+		obj[0] = groupId;
+		conn.executeSelect(sql, r, obj);
+		ResultSet rs = (ResultSet)r.getResultObject();
+		if (rs != null) {
+			while (rs.next()) {
+				usrs.add(rs.getString(1));
+			}
+		}		
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
+		return result;
+	}
 }

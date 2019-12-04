@@ -75,7 +75,7 @@ public class PivotModel {
 	 * @param annotationId
 	 * @param user
 	 * @param resource
-	 * @param title
+	 * @param titl
 	 * @param groupId
 	 * @param created - date string
 	 * @param tags can be <code>null</code> or empty
@@ -83,11 +83,13 @@ public class PivotModel {
 	void processPivotData(String docId,
 								 String userId,
 								 String resource, //url
-								 String title,
+								 String titl,
 								 String groupId,
 								 String created,
 								 List<String>tags) {
-		
+		String title = titl;
+		if (title.equals(""))
+			title = "missing title";
 		environment.logDebug("PM.processPivotData "+resource+" | "+userId+" | "+tags);
 		IPostgresConnection conn = null;
 		IResult r = new ResultPojo();

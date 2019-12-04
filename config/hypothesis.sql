@@ -56,6 +56,8 @@ create table if not exists tq_tagomizer.document  (
 
 create index if not exists document_url_idx on tq_tagomizer.document (url);
 create index if not exists document_did on tq_tagomizer.document(document_id);
+create index if not exists document_gid on tq_tagomizer.document(group_id);
+create index if not exists document_uid on tq_tagomizer.document(user_id);
 GRANT ALL PRIVILEGES ON tq_tagomizer.document TO tq_proxy;
 
 --

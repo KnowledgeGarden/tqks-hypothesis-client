@@ -19,7 +19,8 @@ public class TestFramework {
 		//new FirstProcessorTest();
 		//new HarvestTest();
 		//new ListTags();
-		new SearchTest();
+		//new SearchTest();
+		new UserPivotTest();
 	}
 
 }
