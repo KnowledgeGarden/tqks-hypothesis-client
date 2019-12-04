@@ -29,6 +29,7 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	private TextFileHandler h;
 	private PostgresConnectionFactory provider;
 	private PivotModel pivotModel;
+	private PivotSuite pivotSuite;
 	
 	/**
 	 * 
@@ -52,8 +53,13 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 		analyzer = new Analyzer(this, listener);
 		processor = new JSONProcessor(this, analyzer);
 		client.setProcessor(processor);
+		pivotSuite = new PivotSuite(this);
 	}
 
+	public PivotSuite getPivotSuite() {
+		return pivotSuite;
+	}
+	
 	public PivotModel getPivotModel() {
 		return pivotModel;
 	}

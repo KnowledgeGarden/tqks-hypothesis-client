@@ -97,6 +97,8 @@ public class PivotModel {
 		try {
 			 conn = provider.getConnection();
 		     conn.setProxyRole(r);
+		     insertUser(conn, r, userId);
+		     insertGroup(conn, r, groupId);
 		     insertDocument(conn, r, docId, resource, title, created, groupId, userId);
 		     String tagid;
 		     if (validTags) {
@@ -116,6 +118,27 @@ public class PivotModel {
 		} finally {
 			conn.closeConnection(r);
 		}
+	}
+
+	void insertUser(IPostgresConnection conn, IResult r, String userId)
+			throws Exception {
+		String sql = ISQL.INSERT_USER;
+		environment.logDebug("SQL "+sql+"\n"+userId);
+		Object [] obj = new Object[1];
+		obj[0] = userId;
+		conn.beginTransaction(r);
+		conn.executeSQL(sql, r, obj);
+		conn.endTransaction(r);
+	}
+	void insertGroup(IPostgresConnection conn, IResult r, String groupId)
+			throws Exception {
+		String sql = ISQL.INSERT_GROUP;
+		environment.logDebug("SQL "+sql+"\n"+groupId);
+		Object [] obj = new Object[1];
+		obj[0] = groupId;
+		conn.beginTransaction(r);
+		conn.executeSQL(sql, r, obj);
+		conn.endTransaction(r);
 	}
 
 	void insertDocumentTagReference(IPostgresConnection conn, IResult r, String tagId, String docId)
@@ -191,7 +214,7 @@ public class PivotModel {
 		Object [] obj = new Object[3];
 		obj[0] = docId;
 		obj[1] = text;
-		obj[2] = text; // for tsvector column which cause text to be turned into an tsvector
+		obj[2] = "en";
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);

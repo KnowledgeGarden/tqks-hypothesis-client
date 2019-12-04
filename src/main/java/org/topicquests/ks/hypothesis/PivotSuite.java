@@ -221,7 +221,7 @@ public class PivotSuite {
 		return result;
 	}
 	
-	IResult textSeaarchByQuery(IPostgresConnection conn, IResult r, String query) throws Exception {
+	public IResult textSearchByQuery(IPostgresConnection conn, IResult r, String query) throws Exception {
 		IResult result = new ResultPojo();
 		List<JSONObject> l = new ArrayList<JSONObject>();
 		result.setResultObject(l);
@@ -234,9 +234,9 @@ public class PivotSuite {
 			JSONObject jo;
 			while (rs.next()) {
 				jo = new JSONObject();
-				//TODOjo.put("title", rs.getString(1));
-				//TODOjo.put("docId", rs.getString(2));
-				//TODOl.add(jo);
+				jo.put("docId", rs.getString("document_id"));
+				//jo.put("test", rs.getString("text"));
+				l.add(jo);
 			}
 		}
 		return result;

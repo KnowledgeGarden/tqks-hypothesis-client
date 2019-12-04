@@ -27,18 +27,22 @@ public interface ISQL {
 	public static final String SELECT_DOC_ID_BY_URL_GROUP =
 			"SELECT document_id FROM tq_tagomizer.document WHERE url=? AND group_id=?";
 
-	
+	//check before inserting
 	public static final String INSERT_DOCUMENT =
 			"INSERT  into tq_tagomizer.document (document_id, url, title, created, group_id, user_id) VALUES ( ?, ?, ?, ?, ?, ? ) ON CONFLICT DO NOTHING";
 	
-	//public static final String INSERT_USER =
-	//		"INSERT  into tq_tagomizer.huser (id, document_id, group_id) VALUES ( ?, ?, ? ) ON CONFLICT DO NOTHING";
+	public static final String INSERT_GROUP =
+			"INSERT  into tq_tagomizer.group (id) VALUES ( ? ) ON CONFLICT DO NOTHING";
+
+	public static final String INSERT_USER =
+			"INSERT  into tq_tagomizer.user (id) VALUES ( ? ) ON CONFLICT DO NOTHING";
 	
 	public static final String INSERT_TAG =
 			"INSERT  into tq_tagomizer.tag VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
 
 	public static final String INSERT_ANNOTATION =
-			"INSERT  into tq_tagomizer.annotations VALUES ( ?, ?, to_tsvector( ? )  ) ON CONFLICT DO NOTHING";
+			"INSERT  into tq_tagomizer.annotations VALUES ( ?, ?, ? ) ON CONFLICT DO NOTHING";
+//			"INSERT  into tq_tagomizer.annotations VALUES ( ?, ?, to_tsvector( ? )  ) ON CONFLICT DO NOTHING";
 
 	//public static final String INSERT_TEXT =
 	//		"INSERT  into tq_tagomizer.texts VALUES ( ?, ?, (to_tsvector( ? ) ) ON CONFLICT DO NOTHING";
@@ -131,7 +135,8 @@ public interface ISQL {
 
 	// should return a List<String>
 	public static final String GET_TEXT_BY_QUERY = //TODO join tq_tagomizer.document to get title
-			"SELECT document_id, text WHERE tsv @@ to_tsvector( ? )";
+			"select document_id from tq_tagomizer.annotations where language = 'en' AND to_tsvector('english', text) @@ phraseto_tsquery('english', ?)";
+			//"SELECT document_id FROM tq_tagomizer.annotations WHERE tsvecs @@ phraseto_tsquery( ? )";
 
 	
 }

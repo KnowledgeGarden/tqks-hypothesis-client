@@ -17,8 +17,9 @@ public class TestFramework {
 		//new BootTest();
 		//new FirstClientTest();
 		//new FirstProcessorTest();
-		new HarvestTest();
+		//new HarvestTest();
 		//new ListTags();
+		new SearchTest();
 	}
 
 }
