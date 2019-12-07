@@ -112,6 +112,7 @@ public class HypothesisClient extends BaseHttpClient {
 	 */
 	public IResult loadSomeAnnotations(String GroupID) {
 		cursor = environment.getCursor(GroupID);
+		environment.logDebug("HC.loadSome "+GroupID+" "+cursor);
 		//wait a while
 		synchronized(waitObject) {
 			try {
