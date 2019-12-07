@@ -35,7 +35,7 @@ public class TagomizerClientEnvironment extends RootEnvironment {
 	 * 
 	 */
 	public TagomizerClientEnvironment() {
-		super("harvester-props.xml", "logger.properties");
+		super("tagomizer-props.xml", "logger.properties");
 		h = new TextFileHandler();
 		try {
 			startCursor();
