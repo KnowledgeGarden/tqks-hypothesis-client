@@ -1,11 +1,11 @@
 /**
  * 
  */
-package org.topicquests.ks.hypothesis;
+package org.topicquests.ks.tagomizer;
 
 import java.util.*;
 
-import org.topicquests.ks.hypothesis.api.IAnalyzerListener;
+import org.topicquests.ks.tagomizer.api.IAnalyzerListener;
 import org.topicquests.support.api.IResult;
 
 import net.minidev.json.JSONArray;
@@ -16,14 +16,14 @@ import net.minidev.json.JSONObject;
  *
  */
 public class AnalyzerListener implements IAnalyzerListener {
-	private HypothesisHarvesterEnvironment environment;
+	private TagomizerClientEnvironment environment;
 	private JSONArray anas;
 	private PivotModel pivotModel;
 	
 	/**
 	 * 
 	 */
-	public AnalyzerListener(HypothesisHarvesterEnvironment env) {
+	public AnalyzerListener(TagomizerClientEnvironment env) {
 		environment = env;
 		pivotModel = environment.getPivotModel();
 		anas = new JSONArray();
@@ -34,7 +34,7 @@ public class AnalyzerListener implements IAnalyzerListener {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.topicquests.ks.hypothesis.api.IAnalyzerListener#acceptAnalyzedAnnotation(net.minidev.json.JSONObject)
+	 * @see org.topicquests.ks.tagomizer.api.IAnalyzerListener#acceptAnalyzedAnnotation(net.minidev.json.JSONObject)
 	 */
 	@Override
 	public void acceptAnalyzedAnnotation(JSONObject annotation) {

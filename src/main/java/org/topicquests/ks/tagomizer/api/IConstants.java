@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.topicquests.ks.hypothesis.api;
+package org.topicquests.ks.tagomizer.api;
 
 /**
  * @author jackpark

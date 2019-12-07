@@ -1,13 +1,13 @@
 /**
  * 
  */
-package org.topicquests.ks.hypothesis;
+package org.topicquests.ks.tagomizer;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.topicquests.ks.hypothesis.api.ISQL;
 import org.topicquests.ks.identity.TagIdentifier;
+import org.topicquests.ks.tagomizer.api.ISQL;
 import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.pg.api.IPostgresConnection;
 import org.topicquests.support.ResultPojo;
@@ -20,17 +20,44 @@ import net.minidev.json.JSONObject;
  * To work with hypothesis.sql
  */
 public class PivotModel {
-	private HypothesisHarvesterEnvironment environment;
+	private TagomizerClientEnvironment environment;
 	private PostgresConnectionFactory provider;
 
 	/**
 	 * @param env
 	 */
-	public PivotModel(HypothesisHarvesterEnvironment env) {
+	public PivotModel(TagomizerClientEnvironment env) {
 		environment = env;
 		provider = environment.getProvider();
+		initializeGroupsFromConfig();
 	}
 	
+	void initializeGroupsFromConfig() {
+		List<List<String>> gl = (List<List<String>>)environment.getProperties().get("Groups");
+		Iterator<List<String>> itr = gl.iterator();
+		String name, gid;
+		List<String>l;
+		IPostgresConnection conn = null;
+		IResult r = new ResultPojo();
+		try {
+			 conn = provider.getConnection();
+		     conn.setProxyRole(r);
+			while (itr.hasNext()) {
+				l = itr.next();
+				name = l.get(0);
+				gid = l.get(1);
+				insertGroup(conn, r, gid, name);
+			}
+		} catch (Exception e) {
+			environment.logError(e.getMessage(), e);
+			e.printStackTrace();
+		} finally {
+			conn.closeConnection(r);
+		}
+
+	}
+	
+
 	/**
 	 * <p>Persist the document and its pivots, then
 	 *  persist the text component of annotations</p>
@@ -100,7 +127,7 @@ public class PivotModel {
 			 conn = provider.getConnection();
 		     conn.setProxyRole(r);
 		     insertUser(conn, r, userId);
-		     insertGroup(conn, r, groupId);
+		     //insertGroup(conn, r, groupId);
 		     insertDocument(conn, r, docId, resource, title, created, groupId, userId);
 		     String tagid;
 		     if (validTags) {
@@ -132,12 +159,13 @@ public class PivotModel {
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
 	}
-	void insertGroup(IPostgresConnection conn, IResult r, String groupId)
+	void insertGroup(IPostgresConnection conn, IResult r, String groupId, String groupName)
 			throws Exception {
 		String sql = ISQL.INSERT_GROUP;
 		environment.logDebug("SQL "+sql+"\n"+groupId);
-		Object [] obj = new Object[1];
+		Object [] obj = new Object[2];
 		obj[0] = groupId;
+		obj[1] = groupName;
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);

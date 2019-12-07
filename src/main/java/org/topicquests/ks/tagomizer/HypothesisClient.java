@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.topicquests.ks.hypothesis;
+package org.topicquests.ks.tagomizer;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,9 +24,7 @@ import net.minidev.json.parser.JSONParser;
  * @author jackpark
  * @see https://hc.apache.org/httpcomponents-client-ga/quickstart.html
  */
-public class HypothesisClient {
-	private HypothesisHarvesterEnvironment environment;
-	private CloseableHttpClient client;
+public class HypothesisClient extends BaseHttpClient {
 	private JSONProcessor processor;
 	private Object waitObject = new Object();
 	private long cursor;
@@ -40,9 +38,8 @@ public class HypothesisClient {
 	/**
 	 * @param env
 	 */
-	public HypothesisClient(HypothesisHarvesterEnvironment env) {
-		environment = env;
-		client = HttpClients.createDefault();
+	public HypothesisClient(TagomizerClientEnvironment env) {
+		super(env);
 		BASE_URL = environment.getStringProperty("BaseURL");
 		TOKEN = environment.getStringProperty("DeveloperToken");
 		GROUP_ID = environment.getStringProperty("GroupId");

@@ -1,11 +1,11 @@
 /**
  * 
  */
-package org.topicquests.ks.hypothesis;
+package org.topicquests.ks.tagomizer;
 
 import java.io.File;
 
-import org.topicquests.ks.hypothesis.api.IAnalyzerListener;
+import org.topicquests.ks.tagomizer.api.IAnalyzerListener;
 import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.support.RootEnvironment;
 import org.topicquests.support.util.TextFileHandler;
@@ -17,7 +17,7 @@ import net.minidev.json.parser.JSONParser;
  * @author jackpark
  *
  */
-public class HypothesisHarvesterEnvironment extends RootEnvironment {
+public class TagomizerClientEnvironment extends RootEnvironment {
 	private final String CURSOR_FILE = "Cursor.json";
 	private HypothesisClient client;
 	private JSONProcessor processor;
@@ -34,7 +34,7 @@ public class HypothesisHarvesterEnvironment extends RootEnvironment {
 	/**
 	 * 
 	 */
-	public HypothesisHarvesterEnvironment() {
+	public TagomizerClientEnvironment() {
 		super("harvester-props.xml", "logger.properties");
 		h = new TextFileHandler();
 		try {

@@ -3,7 +3,7 @@
  */
 package tests;
 
-import org.topicquests.ks.hypothesis.api.IAnalyzerListener;
+import org.topicquests.ks.tagomizer.api.IAnalyzerListener;
 import org.topicquests.support.api.IResult;
 import org.topicquests.support.util.TextFileHandler;
 import java.io.*;

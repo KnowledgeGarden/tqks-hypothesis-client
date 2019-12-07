@@ -1,10 +1,10 @@
 /**
  * 
  */
-package org.topicquests.ks.hypothesis;
+package org.topicquests.ks.tagomizer;
 import java.util.*;
 
-import org.topicquests.ks.hypothesis.api.IAnalyzerListener;
+import org.topicquests.ks.tagomizer.api.IAnalyzerListener;
 
 import net.minidev.json.JSONObject;
 
@@ -13,7 +13,7 @@ import net.minidev.json.JSONObject;
  *
  */
 public class Analyzer {
-	private HypothesisHarvesterEnvironment environment;
+	private TagomizerClientEnvironment environment;
 	private IAnalyzerListener listener;
 	private List<JSONObject> annotations;
 	private boolean isRunning = true;
@@ -25,7 +25,7 @@ public class Analyzer {
 	/**
 	 * 
 	 */
-	public Analyzer(HypothesisHarvesterEnvironment env, IAnalyzerListener l) {
+	public Analyzer(TagomizerClientEnvironment env, IAnalyzerListener l) {
 		environment = env;
 		listener = l;
 		annotations = new ArrayList<JSONObject>();

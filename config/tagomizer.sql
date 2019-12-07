@@ -22,6 +22,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA tq_tagomizer
 
 create table if not exists tq_tagomizer.group  (
    id text UNIQUE,
+   name text not null,
    PRIMARY KEY (id)
 );
 

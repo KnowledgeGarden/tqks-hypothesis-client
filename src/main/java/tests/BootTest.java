@@ -3,20 +3,20 @@
  */
 package tests;
 
-import org.topicquests.ks.hypothesis.HypothesisHarvesterEnvironment;
+import org.topicquests.ks.tagomizer.TagomizerClientEnvironment;
 
 /**
  * @author jackpark
  *
  */
 public class BootTest {
-	private HypothesisHarvesterEnvironment environment;
+	private TagomizerClientEnvironment environment;
 
 	/**
 	 * 
 	 */
 	public BootTest() {
-		environment = new HypothesisHarvesterEnvironment();
+		environment = new TagomizerClientEnvironment();
 		System.out.println("A "+environment.getProperties());
 		environment.shutDown();
 		System.exit(0);

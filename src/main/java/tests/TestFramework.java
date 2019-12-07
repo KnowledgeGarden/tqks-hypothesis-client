@@ -3,7 +3,6 @@
  */
 package tests;
 
-import org.topicquests.ks.hypothesis.HypothesisHarvesterEnvironment;
 
 /**
  * @author jackpark
@@ -20,7 +19,11 @@ public class TestFramework {
 		//new HarvestTest();
 		//new ListTags();
 		//new SearchTest();
-		new UserPivotTest();
+		//new UserPivotTest();
+		//new ListResourcesTest();
+		//new ResourcePivotTest();
+		//new TagPivotTest();
+		new GroupPivotTest();
 	}
 
 }

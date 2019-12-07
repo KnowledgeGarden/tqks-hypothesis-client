@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.topicquests.ks.hypothesis;
+package org.topicquests.ks.tagomizer;
 import java.util.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -17,13 +17,13 @@ import net.minidev.json.JSONObject;
  *
  */
 public class JSONProcessor {
-	private HypothesisHarvesterEnvironment environment;
+	private TagomizerClientEnvironment environment;
 	private Analyzer analyzer;
 	private PrintWriter out;
 	/**
 	 * @param env
 	 */
-	public JSONProcessor(HypothesisHarvesterEnvironment env, Analyzer a) {
+	public JSONProcessor(TagomizerClientEnvironment env, Analyzer a) {
 		environment = env;
 		analyzer = a;
 		//debugSetup();
