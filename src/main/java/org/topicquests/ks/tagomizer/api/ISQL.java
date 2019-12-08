@@ -108,6 +108,9 @@ public interface ISQL {
 					"WHERE tq_tagomizer.doc_tag_ref.document_id = ? "+
 					"ORDER BY tq_tagomizer.tag.name ASC LIMIT ? OFFSET ?";
 	
+	public static final String GET_TEXT_BY_RESOURCE =
+			"SELECT text FROM tq_tagomizer.annotations WHERE language=? AND document_id=?";
+
 	// ### tq_tagomizer.reference
 //	public static final String GET_RESOURCE_PIVOT =
 //			"SELECT tq_tagomizer.reference.hyp_id from tq_tagomizer.reference "+
