@@ -323,10 +323,10 @@ public class PivotSuite {
 		     users = (List<String>)x.getResultObject();
 		     x = this.getTextByResourceAndLanguage(conn, r, docId, "en");
 		     text = (List<String>)x.getResultObject();
+		     pivots.put("text", text);
 		     pivots.put("groups", groups);
 		     pivots.put("users", users);
 		     pivots.put("tags", tags);
-		     pivots.put("text", text);
 		     x = this.getDocTitleAndUrl(conn, r, docId);
 		     pivots.put("title", (String)x.getResultObject());
 		     pivots.put("url", (String)x.getResultObjectA());
