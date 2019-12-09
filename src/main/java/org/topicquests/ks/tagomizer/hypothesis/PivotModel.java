@@ -1,12 +1,13 @@
 /**
  * 
  */
-package org.topicquests.ks.tagomizer;
+package org.topicquests.ks.tagomizer.hypothesis;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.topicquests.ks.identity.TagIdentifier;
+import org.topicquests.ks.tagomizer.TagomizerClientEnvironment;
 import org.topicquests.ks.tagomizer.api.ISQL;
 import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.pg.api.IPostgresConnection;
@@ -65,8 +66,9 @@ public class PivotModel {
 	 */
 	public void processDocument(JSONObject document) {
 		//Pivots first to establish the document table
+		String id = document.getAsString("id");
 		processPivotData(
-				document.getAsString("id"),
+				id,
 				document.getAsString("user"),
 				document.getAsString("uri"),
 				document.getAsString("title"),
@@ -74,7 +76,6 @@ public class PivotModel {
 				document.getAsString("created"),
 				(List<String>)document.get("tags"));
 		//now the annotations
-		String id = document.getAsString("id");
 		String annotation = document.getAsString("annotation");
 		String text = document.getAsString("text");
 		environment.logDebug("PM.processDocument "+id+"\n"+annotation+"\n"+text);

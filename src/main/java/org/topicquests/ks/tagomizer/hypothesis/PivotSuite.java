@@ -1,12 +1,13 @@
 /**
  * 
  */
-package org.topicquests.ks.tagomizer;
+package org.topicquests.ks.tagomizer.hypothesis;
 
 import java.sql.ResultSet;
 import java.util.*;
 
 import org.topicquests.ks.identity.TagIdentifier;
+import org.topicquests.ks.tagomizer.TagomizerClientEnvironment;
 import org.topicquests.ks.tagomizer.api.ISQL;
 import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.pg.api.IPostgresConnection;

@@ -5,7 +5,14 @@ package org.topicquests.ks.tagomizer;
 
 import java.io.File;
 
+import org.topicquests.ks.kafka.KafkaHandler;
 import org.topicquests.ks.tagomizer.api.IAnalyzerListener;
+import org.topicquests.ks.tagomizer.hypothesis.Analyzer;
+import org.topicquests.ks.tagomizer.hypothesis.AnalyzerListener;
+import org.topicquests.ks.tagomizer.hypothesis.HypothesisClient;
+import org.topicquests.ks.tagomizer.hypothesis.JSONProcessor;
+import org.topicquests.ks.tagomizer.hypothesis.PivotModel;
+import org.topicquests.ks.tagomizer.hypothesis.PivotSuite;
 import org.topicquests.pg.PostgresConnectionFactory;
 import org.topicquests.support.RootEnvironment;
 import org.topicquests.support.util.TextFileHandler;
@@ -30,6 +37,7 @@ public class TagomizerClientEnvironment extends RootEnvironment {
 	private PostgresConnectionFactory provider;
 	private PivotModel pivotModel;
 	private PivotSuite pivotSuite;
+	private KafkaHandler kafka;
 	
 	/**
 	 * 
@@ -45,7 +53,7 @@ public class TagomizerClientEnvironment extends RootEnvironment {
 		}
 	    String dbName = getStringProperty("DatabaseName");
 	    String schema = getStringProperty("DatabaseSchema");
-	    
+	    kafka = new KafkaHandler(this);
 	    provider = new PostgresConnectionFactory(dbName, schema);
 		client = new HypothesisClient(this);
 	    pivotModel = new PivotModel(this);
@@ -56,6 +64,14 @@ public class TagomizerClientEnvironment extends RootEnvironment {
 		pivotSuite = new PivotSuite(this);
 	}
 
+	/**
+	 * Ship an annotation out as a Kafka Event
+	 * @param annotation
+	 */
+	public void acceptAnalyzedAnnotation(JSONObject annotation) {
+		kafka.acceptAnalyzedAnnotation(annotation);
+	}
+	
 	public PivotSuite getPivotSuite() {
 		return pivotSuite;
 	}

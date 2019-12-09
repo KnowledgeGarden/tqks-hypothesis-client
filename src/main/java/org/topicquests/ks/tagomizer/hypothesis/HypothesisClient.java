@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.topicquests.ks.tagomizer;
+package org.topicquests.ks.tagomizer.hypothesis;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,6 +13,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.topicquests.ks.tagomizer.BaseHttpClient;
+import org.topicquests.ks.tagomizer.TagomizerClientEnvironment;
 import org.topicquests.support.ResultPojo;
 import org.topicquests.support.api.IResult;
 

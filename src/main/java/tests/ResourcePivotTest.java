@@ -10,7 +10,7 @@ import org.topicquests.support.api.IResult;
  *
  */
 public class ResourcePivotTest extends TestRoot {
-	private final String DID = "epJOfBzkEem9G9c4W2oLXw";
+	private final String DID = "u-_FIq2rEembBhsSDPirhg"; //"epJOfBzkEem9G9c4W2oLXw";
 	/**
 	 * 
 	 */

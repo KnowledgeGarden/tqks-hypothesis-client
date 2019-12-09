@@ -1,10 +1,11 @@
 /**
  * 
  */
-package org.topicquests.ks.tagomizer;
+package org.topicquests.ks.tagomizer.hypothesis;
 
 import java.util.*;
 
+import org.topicquests.ks.tagomizer.TagomizerClientEnvironment;
 import org.topicquests.ks.tagomizer.api.IAnalyzerListener;
 import org.topicquests.support.api.IResult;
 
@@ -40,6 +41,7 @@ public class AnalyzerListener implements IAnalyzerListener {
 	public void acceptAnalyzedAnnotation(JSONObject annotation) {
 		pivotModel.processDocument(annotation);
 		anas.add(annotation);
+		environment.acceptAnalyzedAnnotation(annotation);
 		environment.logDebug("Annotations "+anas.size());
 	}
 

@@ -3,10 +3,10 @@
  */
 package tests;
 
-import org.topicquests.ks.tagomizer.HypothesisClient;
 import org.topicquests.ks.tagomizer.TagomizerClientEnvironment;
-import org.topicquests.ks.tagomizer.JSONProcessor;
-import org.topicquests.ks.tagomizer.PivotSuite;
+import org.topicquests.ks.tagomizer.hypothesis.HypothesisClient;
+import org.topicquests.ks.tagomizer.hypothesis.JSONProcessor;
+import org.topicquests.ks.tagomizer.hypothesis.PivotSuite;
 import org.topicquests.pg.PostgresConnectionFactory;
 
 /**

@@ -1,9 +1,10 @@
 /**
  * 
  */
-package org.topicquests.ks.tagomizer;
+package org.topicquests.ks.tagomizer.hypothesis;
 import java.util.*;
 
+import org.topicquests.ks.tagomizer.TagomizerClientEnvironment;
 import org.topicquests.ks.tagomizer.api.IAnalyzerListener;
 
 import net.minidev.json.JSONObject;

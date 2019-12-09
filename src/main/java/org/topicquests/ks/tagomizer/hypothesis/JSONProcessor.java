@@ -1,11 +1,12 @@
 /**
  * 
  */
-package org.topicquests.ks.tagomizer;
+package org.topicquests.ks.tagomizer.hypothesis;
 import java.util.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+import org.topicquests.ks.tagomizer.TagomizerClientEnvironment;
 import org.topicquests.support.ResultPojo;
 import org.topicquests.support.api.IResult;
 
