@@ -36,8 +36,8 @@ public class KafkaHandler {
 	 * @param annotation
 	 */
 	public void acceptAnalyzedAnnotation(JSONObject annotation) {
-		//TODO
-		JSONObject kafkaObject = null;
+		//send as is
+		JSONObject kafkaObject = annotation;
 		producer.sendMessage(KAFKA_TOPIC, kafkaObject.toJSONString(), "tagomizer", new Integer(0));
 	}
 

@@ -41,8 +41,9 @@ public class AnalyzerListener implements IAnalyzerListener {
 	public void acceptAnalyzedAnnotation(JSONObject annotation) {
 		pivotModel.processDocument(annotation);
 		anas.add(annotation);
+		environment.logDebug("ANA\n"+annotation);
 		environment.acceptAnalyzedAnnotation(annotation);
-		environment.logDebug("Annotations "+anas.size());
+		//environment.logDebug("Annotations "+anas.size());
 	}
 
 

@@ -8,7 +8,7 @@
 
 	<!-- Sentence Agents -->
 	<!-- where spacy agent gets paragraphs to process -->
-	<parameter name="SentenceParagraphTopic" value="paragraphs" />
+	<parameter name="SentenceParagraphTopic" value="paragraph" />
 	<!-- where spacy dumps processed paragraphs for sentence agent to consume -->
 	<parameter name="SentenceSpacyTopic" value="spacy" />
 	<!-- where SentenceAgent dumps its processed paragraphs -->

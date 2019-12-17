@@ -50,11 +50,15 @@ create table if not exists tq_tagomizer.document  (
    	url text not null,
    	title text not null,
    	created text not null,
+   	group_id text not null REFERENCES  tq_tagomizer.group (id),
+   	user_id text not null REFERENCES  tq_tagomizer.user (id),
    	PRIMARY KEY (document_id)
 );
 
 create index if not exists document_url_idx on tq_tagomizer.document (url);
 create index if not exists document_did on tq_tagomizer.document(document_id);
+create index if not exists document_gid on tq_tagomizer.document(group_id);
+create index if not exists document_uid on tq_tagomizer.document(user_id);
 GRANT ALL PRIVILEGES ON tq_tagomizer.document TO tq_proxy;
 
 --
@@ -92,24 +96,6 @@ create table if not exists tq_tagomizer.user_tag_ref  (
 GRANT ALL PRIVILEGES ON tq_tagomizer.user_tag_ref TO tq_proxy;
 create index if not exists utr_tid on tq_tagomizer.user_tag_ref (tag_id);
 create index if not exists utr_uid on tq_tagomizer.user_tag_ref (user_id);
-
-create table if not exists tq_tagomizer.group_doc_ref  (
-   group_id text not null REFERENCES  tq_tagomizer.group (id),
-   document_id text not null REFERENCES tq_tagomizer.document (document_id)
-};
-
-GRANT ALL PRIVILEGES ON tq_tagomizer.group_doc_ref TO tq_proxy;
-create index if not exists gtr_did on tq_tagomizer.group_doc_ref (document_id);
-create index if not exists gtr_uid on tq_tagomizer.group_doc_ref (group_id);
-
-create table if not exists tq_tagomizer.group_user_ref  (
-   group_id text not null REFERENCES  tq_tagomizer.group (id),
-   user_id text not null REFERENCES tq_tagomizer.user (id)
-};
-
-GRANT ALL PRIVILEGES ON tq_tagomizer.group_user_ref TO tq_proxy;
-create index if not exists gtr_did on tq_tagomizer.group_user_ref (user_id);
-create index if not exists gtr_uid on tq_tagomizer.group_user_ref (group_id);
 
 
 create table if not exists tq_tagomizer.group_tag_ref  (

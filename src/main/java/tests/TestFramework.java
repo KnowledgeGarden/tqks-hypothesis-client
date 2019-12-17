@@ -16,12 +16,12 @@ public class TestFramework {
 		//new BootTest();
 		//new FirstClientTest();
 		//new FirstProcessorTest();
-		//new HarvestTest();
+		new HarvestTest();
 		//new ListTags();
 		//new SearchTest();
 		//new UserPivotTest();
 		//new ListResourcesTest();
-		new ResourcePivotTest();
+		//new ResourcePivotTest();
 		//new TagPivotTest();
 		//new GroupPivotTest();
 	}
