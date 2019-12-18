@@ -28,7 +28,7 @@ public class KafkaHandler {
 		environment = env;
 		producer = new KafkaProducer(environment, KAFKA_GROUP+Long.toString(System.currentTimeMillis()));
 		kafkaProps = Configurator.getProperties("kafka-topics.xml");
-		KAFKA_TOPIC = (String)kafkaProps.get("SentenceParagraphTopic");
+		KAFKA_TOPIC = (String)kafkaProps.get("SentenceTagomizerTopic");
 	}
 	
 	/**

@@ -9,6 +9,12 @@
 	<!-- Sentence Agents -->
 	<!-- where spacy agent gets paragraphs to process -->
 	<parameter name="SentenceParagraphTopic" value="paragraph" />
+
+	<!-- where spacy agent gets objects from tagomizer to process 
+		fed by KafkaHandler -->
+	<parameter name="SentenceTagomizerTopic" value="tagomizer" />
+	
+	
 	<!-- where spacy dumps processed paragraphs for sentence agent to consume -->
 	<parameter name="SentenceSpacyTopic" value="spacy" />
 	<!-- where SentenceAgent dumps its processed paragraphs -->
