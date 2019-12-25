@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.topicquests</groupId>
     <artifactId>tqks-hypothesis-client</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.6.0-SNAPSHOT</version>
     <name>tqks-hypothesis-client</name>
     <developers>
         <developer>
@@ -297,6 +297,11 @@
 			<groupId>org.topicquests</groupId>
 			<artifactId>tqks-kafka-support</artifactId>
 			<version>0.5.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.topicquests</groupId>
+			<artifactId>tqks-common</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
 		</dependency>
     </dependencies>
     <reporting>
