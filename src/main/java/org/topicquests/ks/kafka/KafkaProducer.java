@@ -19,7 +19,7 @@ public class KafkaProducer extends MessageProducer {
    * @param env
    */
   public KafkaProducer(IEnvironment env, String clientId) {
-    super(env, clientId);
+    super(env, clientId, true);
   }
 
   /**
