@@ -368,6 +368,52 @@ public class PivotSuite {
 	}
 	
 	///////////////////////////
+	// triples
+	///////////////////////////
+	public IResult listTriples(int start, int count) {
+		IResult result = new ResultPojo();
+		List<JSONObject> pivots = new ArrayList<JSONObject>();
+		result.setResultObject(pivots);
+		IPostgresConnection conn = null;
+		IResult r = new ResultPojo();
+		List<String> users;
+		List<JSONObject> tags;
+		List<JSONObject> documents;
+		IResult x;
+		try {
+			 conn = provider.getConnection();
+		     conn.setProxyRole(r);
+		     String sql = ISQL.LIST_TRIPLES;
+				Object [] obj = new Object[2];
+				obj[0] = count;
+				obj[1] = start;
+				conn.executeSelect(sql, r, obj);
+				ResultSet rs = (ResultSet)r.getResultObject();
+				if (rs != null) {
+					JSONObject jo;
+					while (rs.next()) {
+						jo = new JSONObject();
+						jo.put("docId", rs.getString(1));
+						jo.put("subject", rs.getString(2));
+						jo.put("predicate", rs.getString(3));
+						jo.put("object", rs.getString(4));
+						pivots.add(jo);
+					}
+				}
+
+
+		} catch (Exception e) {
+			environment.logError(e.getMessage(), e);
+			e.printStackTrace();
+		} finally {
+			conn.closeConnection(r);
+		}
+		if (r.hasError())
+			result.addErrorString(r.getErrorString());
+		return result;		
+	}
+
+	///////////////////////////
 	// Utilities
 	///////////////////////////
 	

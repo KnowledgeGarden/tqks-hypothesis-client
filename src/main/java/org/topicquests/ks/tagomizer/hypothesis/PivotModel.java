@@ -65,6 +65,7 @@ public class PivotModel {
 	 * @param document
 	 */
 	public void processDocument(JSONObject document) {
+		environment.logDebug("ProcessDocument\n"+document);
 		//Pivots first to establish the document table
 		String id = document.getAsString("id");
 		processPivotData(
@@ -129,7 +130,7 @@ public class PivotModel {
 		     conn.setProxyRole(r);
 		     insertUser(conn, r, userId);
 		     //insertGroup(conn, r, groupId);
-		     insertDocument(conn, r, docId, resource, title, created, groupId, userId);
+		     insertDocument(conn, r, docId, resource, title, created, userId);
 		     String tagid;
 		     if (validTags) {
 		    	 itr = tags.iterator();
@@ -137,8 +138,9 @@ public class PivotModel {
 		    		theTag = itr.next();
 		    		tagid = TagIdentifier.tagToId(theTag);
 		    		insertTag(conn, r, tagid, theTag, groupId);
-		    		insertDocumentTagReference(conn, r, tagid, docId);
+		    		insertDocumentTagReference(conn, r, tagid, docId, groupId);
 		    		insertUserTagReference(conn, r, tagid, userId);
+		    		insertGroupUserReference(conn, r, groupId, userId);
 		    	 }
 		     }
 		     
@@ -160,6 +162,7 @@ public class PivotModel {
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
 	}
+	
 	void insertGroup(IPostgresConnection conn, IResult r, String groupId, String groupName)
 			throws Exception {
 		String sql = ISQL.INSERT_GROUP;
@@ -170,15 +173,36 @@ public class PivotModel {
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
+
 	}
 
-	void insertDocumentTagReference(IPostgresConnection conn, IResult r, String tagId, String docId)
+	void insertDocumentTagReference(IPostgresConnection conn, IResult r, String tagId, String docId, String groupId)
 			throws Exception {
 		String sql = ISQL.INSERT_DOC_TAG_REF;
 		environment.logDebug("SQL "+sql+"\n"+tagId+" "+docId);
 		Object [] obj = new Object[2];
 		obj[0] = tagId;
 		obj[1] = docId;
+		conn.beginTransaction(r);
+		conn.executeSQL(sql, r, obj);
+		conn.endTransaction(r);
+		sql = ISQL.INSERT_GROUP_DOC_REF;
+		environment.logDebug("SQL "+sql+"\n"+docId+" "+groupId);
+		obj = new Object[2];
+		obj[0] = groupId;
+		obj[1] = docId;
+		conn.beginTransaction(r);
+		conn.executeSQL(sql, r, obj);
+		conn.endTransaction(r);
+	}
+
+	void insertGroupUserReference(IPostgresConnection conn, IResult r, String groupId, String userId)
+			throws Exception {
+		String sql = ISQL.INSERT_GROUP_USER_REF;
+		environment.logDebug("SQL "+sql+"\n"+groupId+" "+userId);
+		Object [] obj = new Object[2];
+		obj[0] = groupId;
+		obj[1] = userId;
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		conn.endTransaction(r);
@@ -198,22 +222,28 @@ public class PivotModel {
 
 
 	void insertDocument(IPostgresConnection conn, IResult r, String docId, String resource, 
-				String title, String created, String groupId, String userId)
+				String title, String created, String userId)
 			throws Exception {
-		String sql = ISQL.INSERT_DOCUMENT; //(document_id, url, title, created, group_id, user_id)
-		environment.logDebug("SQL "+sql+"\n"+docId+" "+resource+" "+groupId+" "+userId+" "+created);
-		Object [] obj = new Object[6];
+		String sql = ISQL.INSERT_DOCUMENT; //(document_id, url, title, created)
+		environment.logDebug("SQL "+sql+"\n"+docId+" "+resource+" "+created);
+		Object [] obj = new Object[4];
 		obj[0] = docId;
 		obj[1] = resource;
 		obj[2] = title;
 		obj[3] = created;
-		obj[4] = groupId;
-		obj[5] = userId;
 		conn.beginTransaction(r);
 		conn.executeSQL(sql, r, obj);
 		if (r.hasError())
 			environment.logError("A "+ r.getErrorString(), null);
 		conn.endTransaction(r); // commits
+		sql = ISQL.INSERT_USER_DOC_REF;
+		environment.logDebug("SQL "+sql+"\n"+docId+" "+userId);
+		obj = new Object[2];
+		obj[0] = docId;
+		obj[1] = userId;
+		conn.beginTransaction(r);
+		conn.executeSQL(sql, r, obj);
+		conn.endTransaction(r);
 		if (r.hasError())
 			environment.logError("B "+ r.getErrorString(), null);
 	}

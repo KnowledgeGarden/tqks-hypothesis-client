@@ -93,10 +93,19 @@ GRANT ALL PRIVILEGES ON tq_tagomizer.user_tag_ref TO tq_proxy;
 create index if not exists utr_tid on tq_tagomizer.user_tag_ref (tag_id);
 create index if not exists utr_uid on tq_tagomizer.user_tag_ref (user_id);
 
+create table if not exists tq_tagomizer.user_doc_ref  (
+   document_id text not null REFERENCES  tq_tagomizer.document (document_id),
+   user_id text not null REFERENCES  tq_tagomizer.user (id)
+);
+
+GRANT ALL PRIVILEGES ON tq_tagomizer.user_doc_ref TO tq_proxy;
+create index if not exists udr_did on tq_tagomizer.user_doc_ref (document_id);
+create index if not exists udr_uid on tq_tagomizer.user_doc_ref (user_id);
+
 create table if not exists tq_tagomizer.group_doc_ref  (
    group_id text not null REFERENCES  tq_tagomizer.group (id),
    document_id text not null REFERENCES tq_tagomizer.document (document_id)
-};
+);
 
 GRANT ALL PRIVILEGES ON tq_tagomizer.group_doc_ref TO tq_proxy;
 create index if not exists gtr_did on tq_tagomizer.group_doc_ref (document_id);
@@ -105,11 +114,11 @@ create index if not exists gtr_uid on tq_tagomizer.group_doc_ref (group_id);
 create table if not exists tq_tagomizer.group_user_ref  (
    group_id text not null REFERENCES  tq_tagomizer.group (id),
    user_id text not null REFERENCES tq_tagomizer.user (id)
-};
+);
 
 GRANT ALL PRIVILEGES ON tq_tagomizer.group_user_ref TO tq_proxy;
-create index if not exists gtr_did on tq_tagomizer.group_user_ref (user_id);
-create index if not exists gtr_uid on tq_tagomizer.group_user_ref (group_id);
+create index if not exists gur_did on tq_tagomizer.group_user_ref (user_id);
+create index if not exists gur_uid on tq_tagomizer.group_user_ref (group_id);
 
 
 create table if not exists tq_tagomizer.group_tag_ref  (
@@ -118,8 +127,8 @@ create table if not exists tq_tagomizer.group_tag_ref  (
 );
 
 GRANT ALL PRIVILEGES ON tq_tagomizer.group_tag_ref TO tq_proxy;
-create index if not exists gtr_tid on tq_tagomizer.group_tag_ref (tag_id);
-create index if not exists gtr_uid on tq_tagomizer.group_tag_ref (group_id);
+create index if not exists gttr_tid on tq_tagomizer.group_tag_ref (tag_id);
+create index if not exists gttr_uid on tq_tagomizer.group_tag_ref (group_id);
 
 --
 --	Annotations are text objects, abstracts. They go with URLs - specific documents.
@@ -136,3 +145,12 @@ GRANT ALL PRIVILEGES ON tq_tagomizer.annotations TO tq_proxy;
 -- CREATE INDEX IF NOT EXISTS tsv_annot_en_idx ON tq_tagomizer.annotations USING gin(tsvecs);
 CREATE INDEX IF NOT EXISTS tsv_annot_en_idx ON tq_tagomizer.annotations USING gin(to_tsvector('english', text)) WHERE language = 'en';
 create index if not exists annotations_uid on tq_tagomizer.annotations (document_id);
+
+create table if not exists tq_tagomizer.triples  (
+    document_id text not null REFERENCES  tq_tagomizer.document (document_id),
+   	subject text not null,
+   	predicate text not null,
+   	object text not null
+);
+
+GRANT ALL PRIVILEGES ON tq_tagomizer.triples TO tq_proxy;

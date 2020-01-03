@@ -23,8 +23,9 @@
 	<parameter name="SentenceSentenceOutTopic" value="processedSentences" />
 
 	<!-- Tagomizer producer -->
-	<parameter name="TagomizerClientOutTopic" value="tagomizer" />
+	<parameter name="DocumizerTopic" value="documizer" />
 	
+	<parameter name="DocumizerParagraphTopic" value="paragraph" />
 
 	<!-- TopicMap 
 		The primary topic is "topicmap" used by a producer

@@ -20,16 +20,27 @@ public interface ISQL {
 	public static final String INSERT_USER_TAG_REF =
 			"INSERT  into tq_tagomizer.user_tag_ref (tag_id, user_id) VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
 
+	//tq_tagomizer.user_doc_ref
+	public static final String INSERT_USER_DOC_REF =
+			"INSERT  into tq_tagomizer.user_doc_ref (document_id, user_id) VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
+
 	public static final String INSERT_GROUP_TAG_REF =
 			"INSERT  into tq_tagomizer.group_tag_ref (tag_id, group_id) VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
 
+	//tq_tagomizer.group_user_ref
+	public static final String INSERT_GROUP_USER_REF =
+			"INSERT  into tq_tagomizer.group_user_ref (group_id, user_id) VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
+	
+	//tq_tagomizer.group_doc_ref
+	public static final String INSERT_GROUP_DOC_REF =
+			"INSERT  into tq_tagomizer.group_doc_ref (group_id, document_id) VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
 	
 	public static final String SELECT_DOC_ID_BY_URL_GROUP =
 			"SELECT document_id FROM tq_tagomizer.document WHERE url=? AND group_id=?";
 
 	//check before inserting
 	public static final String INSERT_DOCUMENT =
-			"INSERT  into tq_tagomizer.document (document_id, url, title, created, group_id, user_id) VALUES ( ?, ?, ?, ?, ?, ? ) ON CONFLICT DO NOTHING";
+			"INSERT  into tq_tagomizer.document (document_id, url, title, created) VALUES ( ?, ?, ?, ? ) ON CONFLICT DO NOTHING";
 	
 	public static final String INSERT_GROUP =
 			"INSERT  into tq_tagomizer.group (id, name) VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
@@ -71,7 +82,8 @@ public interface ISQL {
 	public static final String GET_RESOURCES_BY_USER =
 			"SELECT DISTINCT tq_tagomizer.document.title, tq_tagomizer.document.document_id, url, text FROM tq_tagomizer.document "+
 					"JOIN tq_tagomizer.annotations ON tq_tagomizer.document.document_id = tq_tagomizer.annotations.document_id "+
-					"WHERE tq_tagomizer.document.user_id = ? " +
+					"JOIN tq_tagomizer.user_doc_ref ON tq_tagomizer.document.document_id = tq_tagomizer.user_doc_ref.document_id "+
+					"WHERE tq_tagomizer.user_doc_ref.user_id = ? " +
 					"ORDER BY tq_tagomizer.document.title ASC LIMIT ? OFFSET ?";
 
 	public static final String GET_RESOURCES_BY_TAG =
@@ -87,8 +99,8 @@ public interface ISQL {
 	 * ### tq_tagomizer.reference huser
 	 */
 	public static final String GET_USERS_BY_RESOURCE =
-			"SELECT DISTINCT user_id FROM tq_tagomizer.document "+
-					"WHERE tq_tagomizer.document.document_id = ? ";
+			"SELECT DISTINCT user_id FROM tq_tagomizer.user_doc_ref "+
+					"WHERE tq_tagomizer.user_doc_ref.document_id = ? ";
 	
 	public static final String GET_USERS_BY_TAG =
 			"SELECT DISTINCT user_id FROM tq_tagomizer.user_tag_ref "+
@@ -97,9 +109,8 @@ public interface ISQL {
 
 	public static final String GET_TAGS_BY_USER =
 			"SELECT DISTINCT tq_tagomizer.tag.name, tq_tagomizer.tag.id FROM tq_tagomizer.tag "+
-					"JOIN tq_tagomizer.doc_tag_ref ON tq_tagomizer.tag.id = tq_tagomizer.doc_tag_ref.tag_id "+
-					"JOIN tq_tagomizer.document ON tq_tagomizer.doc_tag_ref.document_id = tq_tagomizer.document.document_id "+
-					"WHERE tq_tagomizer.document.user_id = ? "+
+					"JOIN tq_tagomizer.user_tag_ref ON tq_tagomizer.tag.id = tq_tagomizer.user_tag_ref.tag_id "+
+					"WHERE tq_tagomizer.user_tag_ref.user_id = ? "+
 					"ORDER BY tq_tagomizer.tag.name ASC LIMIT ? OFFSET ?";
 
 	public static final String GET_TAGS_BY_RESOURCE =
@@ -119,18 +130,17 @@ public interface ISQL {
 
 	// using tq_tagomizer.document to cluser user_id and group_id
 	public static final String GET_USERS_BY_GROUP =
-			"SELECT DISTINCT user_id from tq_tagomizer.document where group_id=?";
+			"SELECT DISTINCT user_id from tq_tagomizer.group_user_ref where group_id=?";
 
 	public static final String GET_GROUPS_BY_USER =
-			"SELECT DISTINCT group_id, name from tq_tagomizer.document " +
-		    "JOIN tq_tagomizer.group ON tq_tagomizer.document.group_id = tq_tagomizer.group.id "+
-		    "where user_id=?";
+			"SELECT DISTINCT id, name from tq_tagomizer.group " +
+		    "JOIN tq_tagomizer.group_user_ref ON tq_tagomizer.group.id = tq_tagomizer.group_user_ref.group_id "+
+		    "where tq_tagomizer.group_user_ref.user_id=?";
 
 	public static final String GET_GROUPS_BY_TAG =
-			"SELECT DISTINCT group_id, name from tq_tagomizer.document " +
-		    "JOIN tq_tagomizer.group ON tq_tagomizer.document.group_id = tq_tagomizer.group.id "+
-			"JOIN tq_tagomizer.doc_tag_ref ON tq_tagomizer.document.document_id = tq_tagomizer.doc_tag_ref.document_id " +
-		    "where tq_tagomizer.doc_tag_ref.tag_id=?";
+			"SELECT DISTINCT id, name from tq_tagomizer.group " +
+		    "JOIN tq_tagomizer.group_tag_ref ON tq_tagomizer.group.id = tq_tagomizer.group_tag_ref.group_id "+
+		    "where tq_tagomizer.group_tag_ref.tag_id=?";
 
 	public static final String LIST_RESOURCES =
 			"SELECT DISTINCT tq_tagomizer.document.title, tq_tagomizer.document.document_id, url, text FROM tq_tagomizer.document "+
@@ -168,13 +178,14 @@ public interface ISQL {
 	public static final String GET_RESOURCES_BY_GROUP =
 			"SELECT DISTINCT tq_tagomizer.document.title, tq_tagomizer.document.document_id, url, text FROM tq_tagomizer.document "+
 					"JOIN tq_tagomizer.annotations ON tq_tagomizer.document.document_id = tq_tagomizer.annotations.document_id "+
-					"WHERE tq_tagomizer.document.group_id = ? " +
+				    "JOIN tq_tagomizer.group_doc_ref ON tq_tagomizer.document.document_id = tq_tagomizer.group_doc_ref.document_id "+
+					"WHERE tq_tagomizer.group_doc_ref.group_id = ? " +
 					"ORDER BY tq_tagomizer.document.title ASC LIMIT ? OFFSET ?";
 
 	public static final String GET_GROUPS_BY_RESOURCE =
-			"SELECT DISTINCT group_id, name from tq_tagomizer.document " +
-				    "JOIN tq_tagomizer.group ON tq_tagomizer.document.group_id = tq_tagomizer.group.id "+
-				    "where document_id=?";
+			"SELECT DISTINCT id, name  FROM tq_tagomizer.group "+
+				    "JOIN tq_tagomizer.group_doc_ref ON tq_tagomizer.group.id = tq_tagomizer.group_doc_ref.group_id "+
+					"WHERE tq_tagomizer.group_doc_ref.document_id = ? ";
 	
 	// should return a List<String>
 	public static final String GET_TEXT_BY_QUERY = 
@@ -182,4 +193,14 @@ public interface ISQL {
 			"JOIN tq_tagomizer.document ON tq_tagomizer.annotations.document_id = tq_tagomizer.document.document_id " +
 			"where tq_tagomizer.annotations.language = 'en' AND to_tsvector('english', tq_tagomizer.annotations.text) @@ phraseto_tsquery('english', ?) "+
 			"ORDER BY tq_tagomizer.document.title ASC LIMIT ? OFFSET ?";
+
+
+	////////////////////////
+	// Triples
+	////////////////////////
+	public static final String LIST_TRIPLES =
+			"SELECT  document_id, subject, predicate,object from tq_tagomizer.triples " +
+					"ORDER BY tq_tagomizer.triples.document_id ASC LIMIT ? OFFSET ?";
+
+
 }
