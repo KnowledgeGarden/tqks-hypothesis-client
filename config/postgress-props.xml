@@ -2,7 +2,7 @@
 
 <properties>
 	<!-- URL for the server -->
-	<parameter name="DatabaseURL" value = "localhost" />
+	<parameter name="DatabaseURL" value = "192.168.0.7" />
 	<parameter name="DatabasePort" value = "5432" />
 	<parameter name="DbUser" value = "tq_admin" />
 	<parameter name="DbPwd" value = "tq-admin-pwd" />

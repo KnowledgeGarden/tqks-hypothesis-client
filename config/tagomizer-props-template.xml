@@ -2,6 +2,9 @@
 <!-- Fill in the ChangeMe values, 
 	then saveAs harvester-props.xml -->
 <properties>
+	<parameter name="KAFKA_SERVER_URL" value="localhostt" />
+
+	<parameter name="KAFKA_SERVER_PORT" value="9092" />
 
 	<!-- BaseURL includes the
 		api and annotations REST values -->

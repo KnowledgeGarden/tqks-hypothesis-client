@@ -18,7 +18,7 @@
 	
 	<!-- /App Topics -->
 	
-	<parameter name="KAFKA_SERVER_URL" value="localhost" />
+	<parameter name="KAFKA_SERVER_URL" value="192.168.0.7" />
 
 	<parameter name="KAFKA_SERVER_PORT" value="9092" />
 	
