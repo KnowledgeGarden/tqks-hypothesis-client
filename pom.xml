@@ -266,7 +266,7 @@
 		<dependency>
 			<groupId>org.topicquests</groupId>
 			<artifactId>tq-support</artifactId>
-			<version>1.8.0-SNAPSHOT</version>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

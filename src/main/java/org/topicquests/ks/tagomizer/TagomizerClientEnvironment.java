@@ -43,7 +43,7 @@ public class TagomizerClientEnvironment extends RootEnvironment {
 	 * 
 	 */
 	public TagomizerClientEnvironment() {
-		super("tagomizer-props.xml", "logger.properties");
+		super("tagomizer-props.xml");
 		h = new TextFileHandler();
 		try {
 			startCursor();
