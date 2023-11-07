@@ -43,7 +43,6 @@ public class AnalyzerListener implements IAnalyzerListener {
 		pivotModel.processDocument(annotation);
 		anas.add(annotation);
 		environment.logDebug("ANA\n"+annotation);
-		environment.acceptAnalyzedAnnotation(annotationToDocument(annotation));
 		//environment.logDebug("Annotations "+anas.size());
 	}
 
